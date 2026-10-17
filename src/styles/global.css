@@ -1,0 +1,34 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fuente-inter);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--texto-principal);
+  background-color: var(--fondo-base);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-syne);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: var(--marca-primario);
+}
+
+a:hover {
+  color: var(--marca-primario-hover);
+}
+
+.contenedor {
+  width: calc(100% - 2rem);
+  max-width: 80rem;
+  margin-inline: auto;
+}
