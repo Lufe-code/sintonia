@@ -1,9 +1,10 @@
-import {useTextos} from "./hooks/useTextos.js"
+import { useTextos } from "./hooks/useTextos.js"
 import { useEffect, useState } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar";
+import { Ejercicio1 } from "./components/Ejercicio1.jsx";
 
-function leerSeccion(){
+function leerSeccion() {
   return window.location.hash.slice(1) || "inicio";
 }
 
@@ -13,14 +14,14 @@ function App() {
   const [textoGrande, setTextoGrande] = useState(false);
   const datos = useTextos(idioma);
 
-  useEffect (() => {
-    function actualizar () {
+  useEffect(() => {
+    function actualizar() {
       setActivo(leerSeccion());
     }
     window.addEventListener("hashchange", actualizar);
     return () => window.removeEventListener("hashchange", actualizar);
   }, []);
-  
+
   useEffect(() => {
     document.documentElement.lang = idioma;
   }, [idioma]);
@@ -38,17 +39,20 @@ function App() {
   }
 
   return (
+    /*   <>
+       <Navbar {...datos} 
+        idioma={idioma}
+        cambiarIdioma={setIdioma}
+        activo={activo}
+        onBuscar={buscar}
+        textoGrande={textoGrande}
+        alternarTexto={() => setTextoGrande((valor) => !valor)}
+       />
+      </> */
     <>
-     <Navbar {...datos} 
-      idioma={idioma}
-      cambiarIdioma={setIdioma}
-      activo={activo}
-      onBuscar={buscar}
-      textoGrande={textoGrande}
-      alternarTexto={() => setTextoGrande((valor) => !valor)}
-     />
+      <Ejercicio1 />
     </>
-  ); 
+  );
 }
 
 export default App
