@@ -1,0 +1,334 @@
+.catalogo-pagina.ancho-home {
+  width: calc(100% - 12px);
+  max-width: none;
+}
+
+.catalogo-pagina {
+  flex: 1;
+  margin: 8px auto 6px;
+  padding: 24px 20px 36px;
+  border-radius: var(--radio-lg);
+  background: var(--fondo-superficie);
+}
+
+.catalogo-titulo {
+  margin-bottom: 20px;
+}
+
+.catalogo-titulo h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2rem);
+  line-height: 1.2;
+}
+
+.catalogo-titulo p {
+  margin: 4px 0 0;
+  color: var(--texto-secundario);
+  font-size: 0.8rem;
+}
+
+.catalogo-generos h2,
+.catalogo-artistas h2,
+.catalogo-albumes h2,
+.catalogo-pistas h2 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.catalogo-pagina .rejilla-generos {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.catalogo-pagina .genero-item {
+  aspect-ratio: 2;
+  padding: 10px 12px;
+  background: var(--color-genero);
+}
+
+.catalogo-pagina .genero-item:hover { filter: brightness(1.04); }
+
+.catalogo-pagina .genero-item[data-genero="gen_pop"],
+.catalogo-pagina .genero-item[data-genero="gen_folk"] { background: #2bc4b6; }
+.catalogo-pagina .genero-item[data-genero="gen_indie"] { background: #ff6b5e; }
+.catalogo-pagina .genero-item[data-genero="gen_rock"],
+.catalogo-pagina .genero-item[data-genero="gen_andina"],
+.catalogo-pagina .genero-item[data-genero="gen_lofi"] { background: #8e7bff; }
+.catalogo-pagina .genero-item[data-genero="gen_electronica"],
+.catalogo-pagina .genero-item[data-genero="gen_urbano"] { background: #4c8dff; }
+.catalogo-pagina .genero-item[data-genero="gen_salsa"] { background: #ff5fa2; }
+.catalogo-pagina .genero-item[data-genero="gen_tropical"],
+.catalogo-pagina .genero-item[data-genero="gen_jazz"] { background: #f5b544; }
+.catalogo-pagina .genero-item[data-genero="gen_instrumental"] { background: #ff6b5e; }
+.catalogo-pagina .genero-item[data-genero="gen_urbano"] { background: #b7f548; }
+
+.catalogo-pagina .genero-item[aria-current="page"] {
+  outline: 2px solid var(--texto-principal);
+  outline-offset: 2px;
+}
+
+.genero-ilustracion {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.genero-ilustracion use {
+  width: 100%;
+  height: 100%;
+}
+
+.catalogo-pagina .genero-nombre {
+  z-index: 1;
+  font-size: 0.88rem;
+}
+
+.catalogo-pagina .genero-descripcion,
+.catalogo-pagina .genero-flecha {
+  display: none;
+}
+
+.catalogo-artistas {
+  margin-top: 20px;
+}
+
+.catalogo-artistas-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.catalogo-artista {
+  width: 150px;
+  text-align: center;
+}
+
+.catalogo-artista-portada {
+  width: 150px;
+  aspect-ratio: 1;
+  margin: 0 auto 6px;
+  border: 1px solid #ffffff20;
+  border-radius: 50%;
+}
+
+.catalogo-artista h3 {
+  overflow: hidden;
+  margin: 0;
+  font-family: var(--fuente-inter);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalogo-artista p {
+  margin: 2px 0 0;
+  color: var(--texto-terciario);
+  font-size: 0.62rem;
+}
+
+.catalogo-albumes {
+  margin-top: 20px;
+}
+
+.catalogo-albumes-lista {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.catalogo-albumes-detalle .catalogo-albumes-lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.catalogo-albumes-detalle .tarjeta-album {
+  width: clamp(140px, 14vw, 170px);
+}
+
+.catalogo-albumes .portada-album {
+  margin-bottom: 6px;
+}
+
+.catalogo-albumes .portada-catalogo > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.catalogo-albumes .portada-catalogo > svg use {
+  width: 100%;
+  height: 100%;
+}
+
+.catalogo-albumes .datos-album h3 {
+  font-size: 0.72rem;
+}
+
+.catalogo-albumes .datos-album p {
+  font-size: 0.65rem;
+}
+
+.catalogo-pistas {
+  margin-top: 28px;
+}
+
+.catalogo-pistas ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalogo-pistas li {
+  display: grid;
+  min-height: 42px;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--borde-sutil);
+}
+
+.catalogo-pista-numero,
+.catalogo-pistas time {
+  color: var(--texto-terciario);
+  font-size: 0.68rem;
+}
+
+.catalogo-pista-titulo {
+  display: grid;
+  min-width: 0;
+}
+
+.catalogo-pista-titulo strong {
+  overflow: hidden;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalogo-pista-titulo span {
+  color: var(--texto-secundario);
+  font-size: 0.65rem;
+}
+
+@media (max-width: 900px) {
+  .catalogo-albumes-lista {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .catalogo-pagina.ancho-home {
+    width: 100%;
+  }
+
+  .catalogo-pagina {
+    margin: 0;
+    padding: 16px 12px 28px;
+    border-radius: 0;
+  }
+
+  .catalogo-titulo {
+    margin-bottom: 16px;
+  }
+
+  .catalogo-titulo h1 {
+    font-size: 1.55rem;
+  }
+
+  .catalogo-titulo p {
+    font-size: 0.68rem;
+  }
+
+  .catalogo-generos h2,
+  .catalogo-artistas h2,
+  .catalogo-albumes h2,
+  .catalogo-pistas h2 {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+  }
+
+  .catalogo-pagina .rejilla-generos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .catalogo-pagina .genero-item {
+    aspect-ratio: 2;
+    padding: 8px;
+    border-radius: 7px;
+  }
+
+  .catalogo-pagina .genero-nombre {
+    font-size: 0.7rem;
+  }
+
+  .catalogo-artistas {
+    margin-top: 18px;
+  }
+
+  .catalogo-artistas-lista {
+    gap: 12px;
+  }
+
+  .catalogo-artista {
+    width: 66px;
+  }
+
+  .catalogo-artista-portada {
+    width: 56px;
+  }
+
+  .catalogo-albumes {
+    margin-top: 18px;
+  }
+
+  .catalogo-albumes-lista {
+    display: flex;
+    gap: 10px;
+    margin-right: -12px;
+    overflow-x: auto;
+    padding: 0 12px 8px 0;
+    scroll-snap-type: x mandatory;
+  }
+
+  .catalogo-albumes-detalle .catalogo-albumes-lista {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  .catalogo-albumes .tarjeta-album {
+    width: min(46vw, 160px);
+    flex: 0 0 min(46vw, 160px);
+    padding: 8px;
+    border-radius: 10px;
+    background: var(--fondo-elevada);
+    scroll-snap-align: start;
+  }
+
+  .catalogo-albumes .datos-album h3 {
+    font-size: 0.68rem;
+  }
+
+  .catalogo-albumes .datos-album p {
+    font-size: 0.6rem;
+  }
+
+  .catalogo-pistas {
+    margin-top: 22px;
+  }
+
+  .catalogo-pistas li {
+    min-height: 44px;
+    gap: 8px;
+    padding-inline: 4px;
+  }
+}

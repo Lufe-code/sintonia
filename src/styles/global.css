@@ -1,3 +1,5 @@
+@import "./tokens.css";
+
 * {
   box-sizing: border-box;
 }
@@ -9,6 +11,32 @@ body {
   line-height: 1.5;
   color: var(--texto-principal);
   background-color: var(--fondo-base);
+}
+
+html[data-alto-contraste="true"] {
+  --texto-secundario: #e3e1eb;
+  --texto-terciario: #c3c0cf;
+  --borde-sutil: #777582;
+  --borde-fuerte: #aaa8b5;
+}
+
+html[data-subrayar-enlaces="true"] a {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+html[data-espaciado-lectura="true"] body {
+  letter-spacing: 0.035em;
+  line-height: 1.8;
+}
+
+html[data-reducir-movimiento="true"] *,
+html[data-reducir-movimiento="true"] *::before,
+html[data-reducir-movimiento="true"] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
 }
 
 h1,

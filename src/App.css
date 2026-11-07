@@ -4,3 +4,124 @@
     display: flex;
     flex-direction: column;
 }
+
+.sitio > .inicio-publico {
+    flex: 1;
+}
+
+.pie-publico {
+    border-top: 1px solid var(--borde-sutil);
+    color: var(--texto-secundario);
+    background: var(--fondo-superficie);
+}
+
+.pie-publico .logo-sintonia {
+    justify-self: start;
+    width: max-content;
+}
+
+.pie-publico-interior {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) 2fr;
+    gap: 12px 36px;
+    width: min(calc(100% - 2 * var(--margen-pagina)), 80rem);
+    margin-inline: auto;
+    padding-block: 16px 10px;
+}
+
+.pie-publico-interior > p {
+    grid-column: 1;
+    max-width: 240px;
+    margin: -10px 0 0;
+    font-size: 0.7rem;
+}
+
+.pie-publico-columnas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+.pie-publico-columnas h2 {
+    margin: 0 0 6px;
+    color: var(--texto-principal);
+    font-family: var(--fuente-inter);
+    font-size: 0.7rem;
+}
+
+.pie-publico-columnas a,
+.pie-publico-columnas button {
+    display: block;
+    margin-top: 4px;
+    color: var(--texto-secundario);
+    font-size: 0.65rem;
+    text-decoration: none;
+}
+
+.pie-publico-columnas button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.pie-publico-columnas a:hover,
+.pie-publico-columnas button:hover {
+    color: var(--marca-primario);
+}
+
+.pie-publico-legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 20px;
+    grid-column: 1 / -1;
+    padding-top: 13px;
+    border-top: 1px solid var(--borde-sutil);
+    font-size: 0.62rem;
+}
+
+@media (max-width: 650px) {
+    .pie-publico-interior {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        padding-block: 16px 12px;
+    }
+
+    .pie-publico-interior > p {
+        grid-column: 1;
+        max-width: 100%;
+        margin: 0;
+        font-size: 0.7rem;
+    }
+
+    .pie-publico-columnas {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .pie-publico-columnas > div { min-width: 0; }
+    .pie-publico-columnas h2 {
+        margin-bottom: 6px;
+        font-size: 0.75rem;
+    }
+    .pie-publico-columnas a,
+    .pie-publico-columnas button {
+        min-height: 36px;
+        margin-top: 2px;
+        padding-block: 5px;
+        font-size: 0.75rem;
+        line-height: 1.35;
+    }
+    .pie-publico-legal {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        padding-top: 10px;
+        font-size: 0.65rem;
+    }
+}

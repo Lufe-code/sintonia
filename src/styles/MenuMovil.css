@@ -1,0 +1,23 @@
+.boton-menu {
+  display: none;
+}
+
+.boton-menu:focus-visible {
+  outline: 2px solid var(--marca-primario);
+  outline-offset: 3px;
+}
+
+@media (max-width: 680px) {
+  .boton-menu {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    place-items: center;
+    border: 1px solid var(--borde-fuerte);
+    border-radius: 50%;
+    color: var(--texto-principal);
+    background: var(--fondo-elevada);
+    cursor: pointer;
+  }
+}

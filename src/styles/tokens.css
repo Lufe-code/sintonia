@@ -50,6 +50,7 @@
   --radio-lg: 16px;
   --radio-xl: 24px;
   --radio-completo: 999px;
+  --margen-pagina: clamp(1rem, 6vw, 2.5rem);
   /* Familias tipográficas (Google Fonts) */
   --fuente-syne: 'Syne', system-ui, sans-serif;
   --fuente-inter: 'Inter', system-ui, sans-serif;

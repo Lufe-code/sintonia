@@ -5,15 +5,15 @@ const API_BASE = "https://yanethm-sintonia-api.fly.dev/api/v1";
 function validarTextos(datos) {
   const textos = datos?.textos;
   const nav = textos?.navbar;
-  const enlaces = nav?.enlaces?.invitado;
+  const enlaces = nav?.enlaces;
   const botones = nav?.botones?.invitado;
+  const pagina = textos?.paginas?.inicioPublico;
+  const pie = textos?.footer;
   const etiquetas = [
     nav?.logo?.texto,
     nav?.logo?.aria,
-    enlaces?.descubrir,
-    enlaces?.planes,
-    enlaces?.paraArtistas,
-    enlaces?.ayuda,
+    enlaces?.inicio,
+    enlaces?.catalogo,
     nav?.buscador?.placeholder,
     botones?.ingresar,
     botones?.crearCuenta,
@@ -21,6 +21,21 @@ function validarTextos(datos) {
     nav?.aria?.idioma,
     textos?.menuMovil?.abrir,
     textos?.menuMovil?.cerrar,
+    textos?.menuMovil?.enlaces?.inicio,
+    textos?.menuMovil?.enlaces?.catalogo,
+    pagina?.seo?.titulo,
+    pagina?.hero?.titulo,
+    pagina?.hero?.subtitulo,
+    pagina?.hero?.botones?.crearCuentaGratis,
+    pagina?.hero?.botones?.explorarCatalogo,
+    pagina?.destacados?.titulo,
+    pagina?.generos?.titulo,
+    pagina?.cta?.titulo,
+    pagina?.cta?.botones?.crearCuentaGratis,
+    pie?.lema,
+    pie?.columnas?.explora?.titulo,
+    pie?.columnas?.cuenta?.titulo,
+    pie?.columnas?.legal?.titulo,
   ];
 
   if (!etiquetas.every((valor) => typeof valor === "string" && valor.trim())) {
@@ -47,7 +62,7 @@ export function useTextos(idioma) {
       try {
         const parametros = new URLSearchParams({
           idioma,
-          seccion: "navbar,menuMovil",
+          seccion: "navbar,menuMovil,paginas.inicioPublico,footer",
         });
         const respuesta = await fetch(`${API_BASE}/textos?${parametros}`, {
           signal: controlador.signal,
