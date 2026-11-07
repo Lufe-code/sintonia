@@ -1,0 +1,52 @@
+.logo-sintonia {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  color: var(--texto-principal);
+  text-decoration: none;
+}
+
+.logo-sintonia-emblema {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 50%;
+  background: var(--marca-primario);
+}
+
+.logo-sintonia-emblema i {
+  display: block;
+  width: 3px;
+  height: 11px;
+  border-radius: 999px;
+  background: var(--texto-sobre-marca);
+}
+
+.logo-sintonia-emblema i:first-child {
+  height: 8px;
+}
+
+.logo-sintonia-emblema i:nth-child(2) {
+  height: 18px;
+}
+
+.logo-sintonia-emblema i:nth-child(3) {
+  height: 13px;
+}
+
+.logo-sintonia-emblema i:nth-child(4) {
+  height: 7px;
+}
+
+.logo-sintonia-nombre {
+  font-family: var(--fuente-syne);
+  font-size: 1.3125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
