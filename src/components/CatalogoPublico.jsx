@@ -17,6 +17,21 @@ const ILUSTRACIONES_GENERO = {
   gen_instrumental: "genero-instrumental",
 };
 
+const DESCRIPCIONES_GENERO_EN = {
+  gen_pop: "Catchy choruses and melodies made for singing along.",
+  gen_indie: "Independent projects with a sound of their own.",
+  gen_rock: "Up-front guitars and drums with attitude.",
+  gen_electronica: "Synthesizers, sequences, and a steady pulse.",
+  gen_salsa: "Timbales, piano, and a dance floor.",
+  gen_tropical: "Rhythms for celebration and the open road.",
+  gen_andina: "Tiples, strings, and mountain air.",
+  gen_folk: "Acoustic songs that tell stories.",
+  gen_urbano: "Driving beats and stories from the neighborhood.",
+  gen_lofi: "Soft textures to slow things down.",
+  gen_jazz: "Open harmonies and conversations between instruments.",
+  gen_instrumental: "Music without lyrics to help you focus.",
+};
+
 const ILUSTRACIONES_ALBUM = {
   alb_subestacion: "album-0",
   alb_canto_de_guadua: "album-0",
@@ -43,6 +58,12 @@ const ILUSTRACIONES_POR_PATRON = ["album-0", "album-2", "album-5", "album-4"];
 function colorPortada(color) {
   const numero = color?.match(/\d+/)?.[0] || "1";
   return `var(--portada-${numero})`;
+}
+
+function descripcionGenero(genero, ingles) {
+  return ingles
+    ? DESCRIPCIONES_GENERO_EN[genero.id] || genero.descripcion
+    : genero.descripcion;
 }
 
 function PortadaAlbum({ album }) {
@@ -98,7 +119,7 @@ export default function CatalogoPublico({
     : null;
   const detalle = catalogo.find((item) => item.id === generoId);
   const titulo = detalle?.nombre || (ingles ? "Music catalogue" : "Catálogo musical");
-  const subtitulo = detalle?.descripcion || (ingles
+  const subtitulo = (detalle && descripcionGenero(detalle, ingles)) || (ingles
     ? "Explore by genre or open an album to see its songs."
     : "Explora por género o abre un álbum para ver sus canciones.");
   const termino = busqueda.toLocaleLowerCase(idioma);
@@ -155,7 +176,7 @@ export default function CatalogoPublico({
               style={{ "--color-genero": colorPortada(genero.color) }}
             >
               <span className="genero-nombre">{genero.nombre}</span>
-              <span className="genero-descripcion">{genero.descripcion}</span>
+              <span className="genero-descripcion">{descripcionGenero(genero, ingles)}</span>
               <span className="genero-flecha" aria-hidden="true">↗</span>
               {ILUSTRACIONES_GENERO[genero.id] && (
                 <svg className="genero-ilustracion" viewBox="0 0 160 90" aria-hidden="true">
