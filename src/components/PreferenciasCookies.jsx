@@ -1,9 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import "../styles/PreferenciasCookies.css";
 
+function leerAnaliticas(textos, analiticasGuardadas) {
+  if (typeof analiticasGuardadas === "boolean") return analiticasGuardadas;
+  return false;
+}
+
 export default function PreferenciasCookies({
   abierto,
-  idioma,
+  textos,
   analiticasGuardadas,
   onGuardar,
   onCerrar,
@@ -11,11 +16,12 @@ export default function PreferenciasCookies({
   const [analiticas, setAnaliticas] = useState(false);
   const dialogo = useRef(null);
   const focoAnterior = useRef(null);
-  const ingles = idioma === "en";
+  const preferencias = textos?.preferencias;
+  const categorias = preferencias?.categorias || {};
 
   useEffect(() => {
     if (!abierto) return undefined;
-    setAnaliticas(Boolean(analiticasGuardadas));
+    setAnaliticas(leerAnaliticas(textos, analiticasGuardadas));
     focoAnterior.current = document.activeElement;
     const sitio = document.querySelector(".sitio");
     const fondo = Array.from(sitio?.children || [])
@@ -62,9 +68,12 @@ export default function PreferenciasCookies({
       });
       if (focoAnterior.current?.isConnected) focoAnterior.current.focus();
     };
-  }, [abierto, analiticasGuardadas, onCerrar]);
+  }, [abierto, analiticasGuardadas, onCerrar, textos]);
 
-  if (!abierto) return null;
+  if (!abierto || !preferencias) return null;
+
+  const necesarias = categorias.necesarias;
+  const analitica = categorias.analiticas;
 
   return (
     <div className="cookies-capa" onMouseDown={(evento) => {
@@ -79,40 +88,38 @@ export default function PreferenciasCookies({
         tabIndex={-1}
       >
         <header>
-          <h2 id="titulo-preferencias-cookies">
-            {ingles ? "Cookie preferences" : "Preferencias de cookies"}
-          </h2>
-          <button type="button" onClick={onCerrar} aria-label={ingles ? "Close" : "Cerrar"}>×</button>
+          <h2 id="titulo-preferencias-cookies">{preferencias.titulo}</h2>
+          <button type="button" onClick={onCerrar} aria-label={preferencias.aria?.cerrar || textos?.general?.acciones?.cerrar}>×</button>
         </header>
-        <p>
-          {ingles
-            ? "Choose which optional cookies Sintonía may store on this device."
-            : "Elige qué cookies opcionales puede guardar Sintonía en este dispositivo."}
-        </p>
-        <div className="cookies-preferencia">
-          <span>
-            <strong>{ingles ? "Essential" : "Necesarias"}</strong>
-            <small>{ingles ? "Required for the site to work." : "Necesarias para que el sitio funcione."}</small>
-          </span>
-          <input type="checkbox" checked disabled aria-label={ingles ? "Essential cookies enabled" : "Cookies necesarias activadas"} />
-        </div>
-        <label className="cookies-preferencia">
-          <span>
-            <strong>{ingles ? "Analytics" : "Analíticas"}</strong>
-            <small>{ingles ? "Help us understand how the site is used." : "Nos ayudan a entender cómo se usa el sitio."}</small>
-          </span>
-          <input
-            type="checkbox"
-            checked={analiticas}
-            onChange={(evento) => setAnaliticas(evento.target.checked)}
-          />
-        </label>
+        <p>{preferencias.descripcion}</p>
+        {necesarias && (
+          <div className="cookies-preferencia">
+            <span>
+              <strong>{necesarias.nombre}</strong>
+              <small>{necesarias.descripcion}</small>
+            </span>
+            <input type="checkbox" checked disabled aria-label={necesarias.nombre} />
+          </div>
+        )}
+        {analitica && (
+          <label className="cookies-preferencia">
+            <span>
+              <strong>{analitica.nombre}</strong>
+              <small>{analitica.descripcion}</small>
+            </span>
+            <input
+              type="checkbox"
+              checked={analiticas}
+              onChange={(evento) => setAnaliticas(evento.target.checked)}
+            />
+          </label>
+        )}
         <div className="cookies-acciones">
           <button className="cookies-secundario" type="button" onClick={() => onGuardar(false)}>
-            {ingles ? "Reject optional" : "Rechazar opcionales"}
+            {preferencias.botones?.rechazar}
           </button>
           <button className="cookies-primario" type="button" onClick={() => onGuardar(analiticas)}>
-            {ingles ? "Save preferences" : "Guardar preferencias"}
+            {preferencias.botones?.guardar || preferencias.botones?.aceptar}
           </button>
         </div>
       </section>

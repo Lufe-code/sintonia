@@ -2,22 +2,21 @@ import { useEffect, useRef } from "react";
 import "../styles/PanelAccesibilidad.css";
 
 const OPCIONES = [
-  ["altoContraste", "Alto contraste", "Más diferencia entre el texto y el fondo"],
-  ["reducirMovimiento", "Reducir movimiento", "Sin animaciones ni transiciones"],
-  ["subrayarEnlaces", "Subrayar enlaces", "Los enlaces se distinguen sin depender del color"],
-  ["espaciadoLectura", "Espaciado de lectura", "Más espacio entre líneas y entre letras"],
+  { clave: "altoContraste", texto: "altoContraste" },
+  { clave: "reducirMovimiento", texto: "reducirMovimiento" },
+  { clave: "subrayarEnlaces", texto: "subrayarEnlaces" },
+  { clave: "espaciadoLectura", texto: "espaciado" },
 ];
 
 export default function PanelAccesibilidad({
   abierto,
-  idioma,
+  textos,
   preferencias,
   onCambiar,
   onCerrar,
   onRestablecer,
 }) {
   const panel = useRef(null);
-  const ingles = idioma === "en";
 
   useEffect(() => {
     if (!abierto) return undefined;
@@ -32,7 +31,9 @@ export default function PanelAccesibilidad({
     };
   }, [abierto, onCerrar]);
 
-  if (!abierto) return null;
+  if (!abierto || !textos) return null;
+
+  const tamano = textos.tamanoTexto;
 
   return (
     <div
@@ -49,75 +50,61 @@ export default function PanelAccesibilidad({
         aria-modal="false"
         aria-labelledby="titulo-accesibilidad"
       >
-      <header>
-        <h2 id="titulo-accesibilidad">{ingles ? "Accessibility" : "Accesibilidad"}</h2>
-        <button type="button" onClick={onCerrar} aria-label={ingles ? "Close" : "Cerrar"}>
-          ×
-        </button>
-      </header>
+        <header>
+          <h2 id="titulo-accesibilidad">{textos.titulo}</h2>
+          <button type="button" onClick={onCerrar} aria-label={textos.aria?.cerrar}>
+            ×
+          </button>
+        </header>
 
-      <div className="accesibilidad-texto">
-        <strong>{ingles ? "Text size" : "Tamaño del texto"}</strong>
-        <div className="accesibilidad-control-tamano">
-          <button
-            type="button"
-            onClick={() => onCambiar("escalaTexto", Math.max(80, preferencias.escalaTexto - 10))}
-            aria-label={ingles ? "Decrease text size" : "Reducir tamaño del texto"}
-          >
-            −
-          </button>
-          <output>{preferencias.escalaTexto} %</output>
-          <button
-            type="button"
-            onClick={() => onCambiar("escalaTexto", Math.min(150, preferencias.escalaTexto + 10))}
-            aria-label={ingles ? "Increase text size" : "Aumentar tamaño del texto"}
-          >
-            +
-          </button>
+        <div className="accesibilidad-texto">
+          <strong>{tamano?.etiqueta}</strong>
+          <div className="accesibilidad-control-tamano">
+            <button
+              type="button"
+              onClick={() => onCambiar("escalaTexto", Math.max(80, preferencias.escalaTexto - 10))}
+              aria-label={tamano?.reducir}
+            >
+              −
+            </button>
+            <output>{tamano?.valor?.replace("{valor}", String(preferencias.escalaTexto)) || `${preferencias.escalaTexto}%`}</output>
+            <button
+              type="button"
+              onClick={() => onCambiar("escalaTexto", Math.min(150, preferencias.escalaTexto + 10))}
+              aria-label={tamano?.aumentar}
+            >
+              +
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="accesibilidad-opciones">
-        {OPCIONES.map(([clave, titulo, descripcion]) => (
-          <label className="accesibilidad-opcion" key={clave}>
-            <span>
-              <strong>{ingles
-                ? {
-                    altoContraste: "High contrast",
-                    reducirMovimiento: "Reduce motion",
-                    subrayarEnlaces: "Underline links",
-                    espaciadoLectura: "Reading spacing",
-                  }[clave]
-                : titulo}</strong>
-              <small>{ingles
-                ? {
-                    altoContraste: "Increase contrast between text and background",
-                    reducirMovimiento: "Disable animations and transitions",
-                    subrayarEnlaces: "Distinguish links without relying on color",
-                    espaciadoLectura: "Add space between lines and letters",
-                  }[clave]
-                : descripcion}</small>
-            </span>
-            <input
-              type="checkbox"
-              checked={preferencias[clave]}
-              onChange={(evento) => onCambiar(clave, evento.target.checked)}
-            />
-          </label>
-        ))}
-      </div>
+        <div className="accesibilidad-opciones">
+          {OPCIONES.map(({ clave, texto }) => {
+            const opcion = textos[texto];
+            if (!opcion) return null;
+            return (
+              <label className="accesibilidad-opcion" key={clave}>
+                <span>
+                  <strong>{opcion.etiqueta}</strong>
+                  <small>{opcion.ayuda}</small>
+                </span>
+                <input
+                  type="checkbox"
+                  checked={Boolean(preferencias[clave])}
+                  onChange={(evento) => onCambiar(clave, evento.target.checked)}
+                />
+              </label>
+            );
+          })}
+        </div>
 
-      <p className="accesibilidad-nota">
-        {ingles
-          ? "Preferences are saved on this device. Initial values follow your system settings."
-          : "Se guarda en este dispositivo. Los valores iniciales salen de lo que ya definiste en tu sistema."}
-      </p>
-      <footer>
-        <a href="#accesibilidad">{ingles ? "Accessibility statement" : "Declaración de accesibilidad"}</a>
-        <button type="button" onClick={onRestablecer}>
-          {ingles ? "Reset" : "Restablecer"}
-        </button>
-      </footer>
+        <p className="accesibilidad-nota">{textos.mensajes?.nota}</p>
+        <footer>
+          <a href="#accesibilidad">{textos.enlaces?.declaracion}</a>
+          <button type="button" onClick={onRestablecer}>
+            {textos.botones?.restablecer}
+          </button>
+        </footer>
       </section>
     </div>
   );

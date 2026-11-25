@@ -1,7 +1,44 @@
 import { useEffect, useState } from "react";
+import { obtenerJson } from "../config/api.js";
 
-const API_BASE = "https://yanethm-sintonia-api.fly.dev/api/v1";
 const GENEROS_DESTACADOS = 6;
+const LIMITE_ALBUMES_DESTACADOS = 6;
+const TIEMPO_LIMITE_CARGA_MS = 12000;
+
+function asegurarLista(valor) {
+  return Array.isArray(valor) ? valor : [];
+}
+
+function obtenerMarcaTiempo(fechaPublicacion) {
+  const marcaTiempo = new Date(fechaPublicacion).getTime();
+  return Number.isNaN(marcaTiempo) ? 0 : marcaTiempo;
+}
+
+function compararPorFechaDescendente(albumActual, albumComparado) {
+  return (
+    obtenerMarcaTiempo(albumComparado.fechaPublicacion) -
+    obtenerMarcaTiempo(albumActual.fechaPublicacion)
+  );
+}
+
+function obtenerAlbumesConGenero(detalle) {
+  const nombreGenero = detalle?.nombre;
+  return asegurarLista(detalle?.albumes).map((album) => ({
+    ...album,
+    genero: nombreGenero,
+  }));
+}
+
+function deduplicarAlbumesPorId(albumes) {
+  return albumes.filter((album, indice, lista) => {
+    return lista.findIndex((otroAlbum) => otroAlbum.id === album.id) === indice;
+  });
+}
+
+function prepararAlbumesOrdenados(detalles) {
+  const albumesConGenero = detalles.flatMap(obtenerAlbumesConGenero);
+  return deduplicarAlbumesPorId(albumesConGenero).sort(compararPorFechaDescendente);
+}
 
 export function useInicioPublico() {
   const [generos, setGeneros] = useState([]);
@@ -14,85 +51,65 @@ export function useInicioPublico() {
 
   useEffect(() => {
     const controlador = new AbortController();
-    const limite = setTimeout(() => controlador.abort(), 12000);
-    let vigente = true;
+    let solicitudVigente = true;
 
-    async function obtenerJson(url) {
-      const respuesta = await fetch(url, { signal: controlador.signal });
-      if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
-      return respuesta.json();
-    }
+    const temporizadorLimite = setTimeout(() => {
+      controlador.abort();
+    }, TIEMPO_LIMITE_CARGA_MS);
 
     async function cargarInicio() {
       setCargando(true);
       setError(false);
 
       try {
-        const respuestaGeneros = await obtenerJson(`${API_BASE}/generos`);
-        if (!Array.isArray(respuestaGeneros.datos)) {
+        const respuestaGeneros = await obtenerJson("/generos", {
+          signal: controlador.signal,
+        });
+
+        if (!Array.isArray(respuestaGeneros?.datos)) {
           throw new Error("La respuesta no contiene una lista de géneros.");
         }
 
         const listaGeneros = respuestaGeneros.datos;
-        const detalles = await Promise.all(
+        const detallesGeneros = await Promise.all(
           listaGeneros.map((genero) =>
-            obtenerJson(`${API_BASE}/generos/${encodeURIComponent(genero.id)}`),
+            obtenerJson(`/generos/${encodeURIComponent(genero.id)}`, {
+              signal: controlador.signal,
+            }),
           ),
         );
-        const albumesCatalogo = detalles
-          .flatMap((detalle) =>
-            (Array.isArray(detalle.albumes) ? detalle.albumes : []).map(
-              (album) => ({ ...album, genero: detalle.nombre }),
-            ),
-          )
-          .filter(
-            (album, indice, lista) =>
-              lista.findIndex((otro) => otro.id === album.id) === indice,
-          )
-          .sort(
-            (a, b) =>
-              new Date(b.fechaPublicacion).getTime() -
-              new Date(a.fechaPublicacion).getTime(),
-          );
-        const albumesDestacados = detalles
-          .slice(0, GENEROS_DESTACADOS)
-          .flatMap((detalle) =>
-            (Array.isArray(detalle.albumes) ? detalle.albumes : []).map(
-              (album) => ({ ...album, genero: detalle.nombre }),
-            ),
-          )
-          .filter(
-            (album, indice, lista) =>
-              lista.findIndex((otro) => otro.id === album.id) === indice,
-          )
-          .sort(
-            (a, b) =>
-              new Date(b.fechaPublicacion).getTime() -
-              new Date(a.fechaPublicacion).getTime(),
-          )
-          .slice(0, 6);
 
-        if (vigente) {
-          setGeneros(listaGeneros);
-          setAlbumes(albumesDestacados);
-          setCatalogo(detalles);
-          setAlbumesCatalogo(albumesCatalogo);
+        const albumesCatalogoLista = prepararAlbumesOrdenados(detallesGeneros);
+        const albumesDestacados = prepararAlbumesOrdenados(
+          detallesGeneros.slice(0, GENEROS_DESTACADOS),
+        ).slice(0, LIMITE_ALBUMES_DESTACADOS);
+
+        if (!solicitudVigente) {
+          return;
         }
+
+        setGeneros(listaGeneros);
+        setAlbumes(albumesDestacados);
+        setCatalogo(detallesGeneros);
+        setAlbumesCatalogo(albumesCatalogoLista);
       } catch (errorCarga) {
-        if (vigente) {
+        if (solicitudVigente) {
           console.error("Error al cargar el inicio público:", errorCarga);
           setError(true);
         }
       } finally {
-        clearTimeout(limite);
-        if (vigente) setCargando(false);
+        clearTimeout(temporizadorLimite);
+        if (solicitudVigente) {
+          setCargando(false);
+        }
       }
     }
 
     cargarInicio();
+
     return () => {
-      vigente = false;
-      clearTimeout(limite);
+      solicitudVigente = false;
+      clearTimeout(temporizadorLimite);
       controlador.abort();
     };
   }, [intento]);
@@ -104,6 +121,8 @@ export function useInicioPublico() {
     albumesCatalogo,
     cargando,
     error,
-    recargar: () => setIntento((valor) => valor + 1),
+    recargar: () => {
+      setIntento((valorAnterior) => valorAnterior + 1);
+    },
   };
 }

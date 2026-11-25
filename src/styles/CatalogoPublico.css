@@ -41,44 +41,35 @@
   gap: 10px 12px;
 }
 
-.catalogo-pagina .genero-item {
+.catalogo-pagina .rejilla-generos .genero-item {
   aspect-ratio: 2;
   padding: 10px 12px;
   background: var(--color-genero);
 }
 
-.catalogo-pagina .genero-item:hover { filter: brightness(1.04); }
+.catalogo-pagina .rejilla-generos .genero-item::before,
+.catalogo-pagina .rejilla-generos .genero-item::after {
+  content: none;
+}
 
-.catalogo-pagina .genero-item[data-genero="gen_pop"],
-.catalogo-pagina .genero-item[data-genero="gen_folk"] { background: #2bc4b6; }
-.catalogo-pagina .genero-item[data-genero="gen_indie"] { background: #ff6b5e; }
-.catalogo-pagina .genero-item[data-genero="gen_rock"],
-.catalogo-pagina .genero-item[data-genero="gen_andina"],
-.catalogo-pagina .genero-item[data-genero="gen_lofi"] { background: #8e7bff; }
-.catalogo-pagina .genero-item[data-genero="gen_electronica"],
-.catalogo-pagina .genero-item[data-genero="gen_urbano"] { background: #4c8dff; }
-.catalogo-pagina .genero-item[data-genero="gen_salsa"] { background: #ff5fa2; }
-.catalogo-pagina .genero-item[data-genero="gen_tropical"],
-.catalogo-pagina .genero-item[data-genero="gen_jazz"] { background: #f5b544; }
-.catalogo-pagina .genero-item[data-genero="gen_instrumental"] { background: #ff6b5e; }
-.catalogo-pagina .genero-item[data-genero="gen_urbano"] { background: #b7f548; }
+.catalogo-pagina .genero-item:hover { filter: brightness(1.04); }
 
 .catalogo-pagina .genero-item[aria-current="page"] {
   outline: 2px solid var(--texto-principal);
   outline-offset: 2px;
 }
 
-.genero-ilustracion {
+.catalogo-pagina .genero-ilustracion {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  right: 8px;
+  bottom: -10px;
+  width: clamp(56px, 34%, 84px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  transform: rotate(12deg);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
   pointer-events: none;
-}
-
-.genero-ilustracion use {
-  width: 100%;
-  height: 100%;
 }
 
 .catalogo-pagina .genero-nombre {
@@ -269,6 +260,13 @@
 
   .catalogo-pagina .genero-nombre {
     font-size: 0.7rem;
+  }
+
+  .catalogo-pagina .genero-ilustracion {
+    right: 6px;
+    bottom: -8px;
+    width: clamp(44px, 32%, 64px);
+    border-radius: 6px;
   }
 
   .catalogo-artistas {
