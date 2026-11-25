@@ -1,8 +1,65 @@
+import AvisoEstado from "./AvisoEstado.jsx";
+import portada1 from "../assets/portada tarjetas/1.png";
+import portada2 from "../assets/portada tarjetas/2.png";
+import portada3 from "../assets/portada tarjetas/3.png";
+import portada4 from "../assets/portada tarjetas/4.png";
+import portada5 from "../assets/portada tarjetas/5.png";
+import imagenGeneroCantoDeGuadua from "../assets/portada tarjetas/album-canto-de-guadua.png";
+import imagenGeneroMusicaAndina from "../assets/portada tarjetas/genero-musica-andina.png";
+import imagenGeneroMareaViva from "../assets/portada tarjetas/album-marea-viva.png";
+import imagenGeneroFrailejonAcustico from "../assets/portada tarjetas/album-frailejon-acustico.png";
+import imagenGeneroEnVivoEnElRuiz from "../assets/portada tarjetas/album-en-vivo-en-el-ruiz.png";
+import imagenGeneroPleamar from "../assets/portada tarjetas/album-pleamar.png";
+import imagenGeneroInstrumental from "../assets/portada tarjetas/genero-instrumental.png";
+import imagenPortadaInicio from "../assets/icono portada/inicio-collage.png";
 import "../styles/InicioPublico.css";
 
-function colorPortada(color) {
-  const numero = color?.match(/\d+/)?.[0] || "1";
-  return `var(--portada-${numero})`;
+const PORTADAS_DESTACADOS = [portada1, portada2, portada3, portada4, portada1, portada5];
+const IMAGENES_GENERO_ORDENADAS = [
+  imagenGeneroCantoDeGuadua,
+  portada1,
+  portada2,
+  portada4,
+  portada5,
+  portada3,
+  imagenGeneroMusicaAndina,
+  imagenGeneroMareaViva,
+  imagenGeneroFrailejonAcustico,
+  imagenGeneroEnVivoEnElRuiz,
+  imagenGeneroPleamar,
+  imagenGeneroInstrumental,
+];
+
+function colorGenero(genero) {
+  return genero?.colorHex || genero?.portada?.fondo || "var(--marca-secundario)";
+}
+
+function obtenerImagenDesdeApi(registro, claves) {
+  for (const clave of claves) {
+    const valor = clave.split(".").reduce((acumulado, segmento) => acumulado?.[segmento], registro);
+    if (typeof valor === "string" && valor.trim()) {
+      return valor;
+    }
+  }
+  return "";
+}
+
+function obtenerIlustracionGenero(genero, indiceGenero) {
+  const imagenApi = obtenerImagenDesdeApi(genero, [
+    "ilustracion",
+    "imagen",
+    "imagenUrl",
+    "urlImagen",
+    "portada.imagen",
+    "portada.imagenUrl",
+    "portada.url",
+  ]);
+
+  if (imagenApi) {
+    return imagenApi;
+  }
+
+  return IMAGENES_GENERO_ORDENADAS[indiceGenero % IMAGENES_GENERO_ORDENADAS.length];
 }
 
 function fechaAlbum(fecha, idioma) {
@@ -16,13 +73,15 @@ function fechaAlbum(fecha, idioma) {
   }).format(fechaLocal);
 }
 
-function PortadaAlbum({ indice, clase = "" }) {
+function PortadaAlbum({ album, indice }) {
   return (
-    <div
-      className={`portada-album portada-patron-${indice % 6} ${clase}`}
-      aria-hidden="true"
-    >
-    </div>
+    <img
+      className="portada-album portada-destacada"
+      src={PORTADAS_DESTACADOS[indice % PORTADAS_DESTACADOS.length]}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
   );
 }
 
@@ -33,13 +92,15 @@ export default function InicioPublico({
   cargandoTextos,
   errorTextos,
   recargarTextos,
+  estados,
+  errores,
+  general,
   generos = [],
   albumes = [],
   cargando,
   error,
   recargar,
 }) {
-  const ingles = idioma === "en";
   const hero = textos?.hero;
   const cifras = textos?.cifras;
   const destacados = textos?.destacados;
@@ -54,97 +115,92 @@ export default function InicioPublico({
       ].some((valor) => valor?.toLocaleLowerCase(idioma).includes(termino)))
     : albumes;
 
+  const mensajeError = errorTextos || error
+    ? (errores?.general?.error_interno || estados?.error?.mensaje)
+    : null;
+  const accionError = errorTextos ? recargarTextos : recargar;
+
   return (
     <main className="inicio-publico" id="inicio">
-      {(errorTextos || error) && (
-        <div className="aviso-inicio" role="status">
-          <span>
-            {errorTextos
-              ? ingles ? "Some page content could not be loaded." : "No se pudo cargar parte del contenido."
-              : ingles ? "The catalogue could not be loaded." : "No se pudo cargar el catálogo."}
-          </span>
-          <button type="button" onClick={errorTextos ? recargarTextos : recargar}>
-            {ingles ? "Try again" : "Reintentar"}
-          </button>
-        </div>
-      )}
+      <AvisoEstado
+        mensaje={mensajeError}
+        accion={accionError}
+        textoAccion={general?.acciones?.reintentar || estados?.error?.accion}
+      />
 
       <section className="inicio-hero ancho-home" aria-labelledby="titulo-inicio">
         <div className="inicio-hero-texto">
-          <span className="inicio-etiqueta">
-            {hero?.etiquetas?.temporada || (ingles ? "Discover your next favorite" : "Descubre tu próximo sonido")}
-          </span>
-          <h1 id="titulo-inicio">
-            {hero?.titulo || (ingles ? "Keep the music playing" : "Que no pare la música")}
-          </h1>
-          <p>
-            {hero?.subtitulo || (ingles
-              ? "Explore albums, artists and sounds from every genre."
-              : "Explora álbumes, artistas y sonidos de todos los géneros.")}
-          </p>
+          {hero?.etiquetas?.temporada && (
+            <span className="inicio-etiqueta">{hero.etiquetas.temporada}</span>
+          )}
+          <h1 id="titulo-inicio">{hero?.titulo}</h1>
+          <p>{hero?.subtitulo}</p>
           <div className="inicio-acciones">
             <a className="boton-home primario" href="#registro">
-              {hero?.botones?.crearCuentaGratis || (ingles ? "Sign up free" : "Crear cuenta gratis")}
+              {hero?.botones?.crearCuentaGratis}
             </a>
             <a className="boton-home secundario" href="#catalogo">
-              {hero?.botones?.explorarCatalogo || (ingles ? "Explore the catalogue" : "Explorar el catálogo")}
+              {hero?.botones?.explorarCatalogo}
             </a>
           </div>
           <dl className="inicio-cifras">
             <div>
-              <dt>{cifras?.canciones?.valor || "120 mil"}</dt>
-              <dd>{cifras?.canciones?.etiqueta || (ingles ? "free-to-use songs" : "canciones de uso libre")}</dd>
+              <dt>{cifras?.canciones?.valor}</dt>
+              <dd>{cifras?.canciones?.etiqueta}</dd>
             </div>
             <div>
               <dt>{generos.length}</dt>
-              <dd>{cifras?.generos?.etiqueta || (ingles ? "genres to explore" : "géneros para explorar")}</dd>
+              <dd>{cifras?.generos?.etiqueta}</dd>
             </div>
             <div>
-              <dt>{cifras?.cortes?.valor || "0"}</dt>
-              <dd>{cifras?.cortes?.etiqueta || (ingles ? "browsing interruptions" : "cortes al navegar")}</dd>
+              <dt>{cifras?.cortes?.valor}</dt>
+              <dd>{cifras?.cortes?.etiqueta}</dd>
             </div>
           </dl>
         </div>
 
         <div className="inicio-hero-visual" aria-hidden="true">
-          <div className="collage-portada">
-            <span />
-            <div className="collage-vinilo" />
-          </div>
-          <div className="collage-pegatina collage-pegatina-rayas" />
-          <div className="collage-pegatina collage-pegatina-arcos" />
-          <div className="collage-nota">
-            <strong>{ingles ? "The mist rises over the mountain" : "Sube la niebla por la montaña"}</strong>
-            <span>{ingles ? "and the road sings" : "y el camino canta"}</span>
-          </div>
+          <img
+            className="inicio-hero-portada"
+            src={imagenPortadaInicio}
+            alt=""
+            loading="eager"
+            decoding="async"
+          />
+          {hero?.nota && (
+            <div className="collage-nota">
+              <strong>{hero.nota.titulo || hero.nota.texto}</strong>
+              {hero.nota.detalle && <span>{hero.nota.detalle}</span>}
+            </div>
+          )}
         </div>
       </section>
 
       <section className="seccion-inicio seccion-albumes" id="catalogo" aria-labelledby="titulo-albumes">
         <div className="seccion-cabecera ancho-home">
           <div>
-            <span className="inicio-etiqueta">{ingles ? "FRESHLY ADDED" : "RECIÉN AÑADIDOS"}</span>
-            <h2 id="titulo-albumes">{destacados?.titulo || (ingles ? "On repeat this week" : "Suena esta semana")}</h2>
+            {destacados?.etiqueta && <span className="inicio-etiqueta">{destacados.etiqueta}</span>}
+            <h2 id="titulo-albumes">{destacados?.titulo}</h2>
           </div>
           <a href="#generos">
             <span className="texto-enlace-escritorio">
-              {destacados?.enlaces?.descubrirMas || (ingles ? "Discover more" : "Descubrir más")}
+              {destacados?.enlaces?.descubrirMas}
             </span>
             <span className="texto-enlace-movil">
-              {ingles ? "View catalogue" : "Ver catálogo"}
+              {seccionGeneros?.enlaces?.verCatalogo}
             </span>
             <span aria-hidden="true">→</span>
           </a>
         </div>
         {cargando && albumesFiltrados.length === 0 ? (
           <p className="estado-catalogo ancho-home" role="status">
-            {ingles ? "Loading the catalogue..." : "Cargando catálogo..."}
+            {estados?.cargando?.mensaje}
           </p>
         ) : albumesFiltrados.length > 0 ? (
           <div className="rejilla-albumes ancho-home">
             {albumesFiltrados.map((album, indice) => (
               <article className="tarjeta-album" key={album.id}>
-                <PortadaAlbum indice={indice} />
+                <PortadaAlbum album={album} indice={indice} />
                 <div className="datos-album">
                   <div>
                     <h3>{album.titulo}</h3>
@@ -159,32 +215,35 @@ export default function InicioPublico({
             ))}
           </div>
         ) : (
-          <p className="estado-catalogo ancho-home">
-            {termino
-              ? ingles ? "No matching albums were found." : "No se encontraron álbumes para esa búsqueda."
-              : ingles ? "No albums are available right now." : "Todavía no hay álbumes disponibles."}
-          </p>
+          <p className="estado-catalogo ancho-home">{estados?.vacio?.generico?.mensaje}</p>
         )}
       </section>
 
       <section className="seccion-inicio seccion-generos" id="generos" aria-labelledby="titulo-generos">
         <div className="seccion-cabecera ancho-home">
           <div>
-            <span className="inicio-etiqueta">{ingles ? "FIND YOUR FREQUENCY" : "ENCUENTRA TU FRECUENCIA"}</span>
-            <h2 id="titulo-generos">{seccionGeneros?.titulo || (ingles ? "Explore by genre" : "Explora por género")}</h2>
+            {seccionGeneros?.etiqueta && <span className="inicio-etiqueta">{seccionGeneros.etiqueta}</span>}
+            <h2 id="titulo-generos">{seccionGeneros?.titulo}</h2>
           </div>
           <a href="#catalogo">
-            {seccionGeneros?.enlaces?.verCatalogo || (ingles ? "View catalogue" : "Ver catálogo")} <span aria-hidden="true">↗</span>
+            {seccionGeneros?.enlaces?.verCatalogo} <span aria-hidden="true">↗</span>
           </a>
         </div>
         <div className="rejilla-generos ancho-home">
-          {generos.slice(0, 8).map((genero) => (
+          {generos.slice(0, 8).map((genero, indiceGenero) => (
             <a
               className="genero-item"
               href={`#genero/${encodeURIComponent(genero.id)}`}
               key={genero.id}
-              style={{ "--color-genero": colorPortada(genero.color) }}
+              style={{ "--color-genero": colorGenero(genero) }}
             >
+              <img
+                className="genero-ilustracion"
+                src={obtenerIlustracionGenero(genero, indiceGenero)}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
               <span className="genero-punto" aria-hidden="true" />
               <span className="genero-nombre">{genero.nombre}</span>
               <span className="genero-descripcion">{genero.descripcion}</span>
@@ -192,7 +251,7 @@ export default function InicioPublico({
             </a>
           ))}
           {cargando && generos.length === 0 && (
-            <p className="estado-catalogo">{ingles ? "Loading genres..." : "Cargando géneros..."}</p>
+            <p className="estado-catalogo">{estados?.cargando?.mensaje}</p>
           )}
         </div>
       </section>
@@ -200,18 +259,18 @@ export default function InicioPublico({
       <section className="inicio-cta">
         <div className="inicio-cta-interior ancho-home">
           <div>
-            <span className="inicio-etiqueta">{ingles ? "YOUR MUSIC, YOUR WAY" : "TU MÚSICA, A TU MANERA"}</span>
-            <h2>{cta?.titulo || (ingles ? "Your next favorite song is one click away" : "Tu próxima canción favorita está a un clic")}</h2>
-            <p>{cta?.texto || (ingles ? "Create your free account and start exploring." : "Crea tu cuenta gratis y empieza a explorar.")}</p>
+            {cta?.etiqueta && <span className="inicio-etiqueta">{cta.etiqueta}</span>}
+            <h2>{cta?.titulo}</h2>
+            <p>{cta?.texto}</p>
           </div>
           <a className="boton-home primario" href="#registro">
-            {cta?.botones?.crearCuentaGratis || (ingles ? "Sign up free" : "Crear cuenta gratis")}
+            {cta?.botones?.crearCuentaGratis}
           </a>
         </div>
       </section>
       {cargandoTextos && (
         <span className="sr-only" role="status">
-          {ingles ? "Loading page content" : "Cargando contenido de la página"}
+          {estados?.cargando?.mensaje}
         </span>
       )}
     </main>

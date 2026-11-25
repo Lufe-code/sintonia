@@ -1,17 +1,24 @@
 import "../styles/MenuMovil.css";
+
 export default function MenuMovil({
-  abierto,
+  abierto = false,
   onAlternar,
   menuId,
   botonRef,
   textos,
+  etiquetaAbrir,
+  etiquetaCerrar,
+  className = "boton-menu",
 }) {
+  const abrir = etiquetaAbrir ?? textos?.abrirMenu;
+  const cerrar = etiquetaCerrar ?? textos?.cerrarMenu;
+
   return (
     <button
       type="button"
       ref={botonRef}
-      className="boton-menu"
-      aria-label={abierto ? textos.cerrarMenu : textos.abrirMenu}
+      className={className}
+      aria-label={abierto ? cerrar : abrir}
       aria-expanded={abierto}
       aria-controls={menuId}
       onClick={onAlternar}

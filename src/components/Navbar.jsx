@@ -19,6 +19,7 @@ export default function Navbar({
   const id = useId();
   const nav = textos?.navbar;
   const menuMovil = textos?.menuMovil;
+  const accesibilidad = textos?.accesibilidad;
 
   useEffect(() => {
     if (!abierto) return undefined;
@@ -35,6 +36,8 @@ export default function Navbar({
     setAbierto(false);
   }
 
+  if (!nav) return null;
+
   return (
     <header
       className={`cabecera-home${abierto ? " menu-movil-abierto" : ""}`}
@@ -46,53 +49,53 @@ export default function Navbar({
       }}
     >
       <div className="ancho-home fila-cabecera">
-        <LogoSintonia ariaLabel={nav?.logo?.aria} />
+        <LogoSintonia ariaLabel={nav?.logo?.aria} nombre={nav?.logo?.nombre} />
         <MenuMovil
           abierto={abierto}
           onAlternar={() => setAbierto((valor) => !valor)}
           menuId={id}
           botonRef={boton}
           textos={{
-            abrirMenu: menuMovil?.abrir || "Abrir menú",
-            cerrarMenu: menuMovil?.cerrar || "Cerrar menú",
+            abrirMenu: menuMovil?.abrir,
+            cerrarMenu: menuMovil?.cerrar,
           }}
         />
         <nav
           id={id}
           className={`menu-home ${abierto ? "abierto" : ""}`}
-          aria-label={nav?.aria?.navegacion || "Navegación principal"}
+          aria-label={nav?.aria?.navegacion}
         >
           <a
             href="#inicio"
             aria-current={activo === "inicio" ? "page" : undefined}
             onClick={() => setAbierto(false)}
           >
-            {nav?.enlaces?.inicio || "Inicio"}
+            {nav?.enlaces?.inicio}
           </a>
           <a
             href="#catalogo"
             aria-current={activo === "catalogo" ? "page" : undefined}
             onClick={() => setAbierto(false)}
           >
-            {nav?.enlaces?.catalogo || "Catálogo"}
+            {nav?.enlaces?.catalogo}
           </a>
           <div className="acciones-home">
             <form className="busqueda-home" role="search" onSubmit={enviarBusqueda}>
               <input
                 type="search"
-                aria-label={nav?.buscador?.placeholder || "Buscar álbumes"}
-                placeholder={nav?.buscador?.placeholder || "Buscar álbumes"}
+                aria-label={nav?.buscador?.placeholder}
+                placeholder={nav?.buscador?.placeholder}
                 value={consulta}
                 onChange={(evento) => setConsulta(evento.target.value)}
               />
-              <button type="submit" aria-label={idioma === "es" ? "Buscar" : "Search"}>
+              <button type="submit" aria-label={textos?.general?.acciones?.buscar || nav?.buscador?.placeholder}>
                 <Icono nombre="buscar" />
               </button>
             </form>
             <button
               className="control-home control-texto"
               type="button"
-              aria-label={nav?.aria?.accesibilidad || "Cambiar tamaño del texto"}
+              aria-label={nav?.aria?.accesibilidad || accesibilidad?.titulo}
               aria-expanded={accesibilidadAbierta}
               aria-controls="panel-accesibilidad"
               onClick={() => {
@@ -101,18 +104,16 @@ export default function Navbar({
               }}
             >
               <span className="control-texto-etiqueta">
-                {idioma === "en" ? "Accessibility" : "Accesibilidad"}
+                {accesibilidad?.titulo || nav?.menu?.idiomaYAccesibilidad}
               </span>
               <Icono nombre="accesibilidad" />
             </button>
             <div className="idioma-home">
-              <span className="idioma-home-etiqueta">
-                {idioma === "en" ? "Language" : "Idioma"}
-              </span>
-              <div className="selector-idioma" role="group" aria-label={nav?.aria?.idioma || "Idioma"}>
+              <span className="idioma-home-etiqueta">{nav?.menu?.idioma}</span>
+              <div className="selector-idioma" role="group" aria-label={nav?.aria?.idioma}>
                 <button
                   type="button"
-                  aria-label={idioma === "es" ? "Español" : "Spanish"}
+                  aria-label={nav?.aria?.idiomaEs}
                   aria-pressed={idioma === "es"}
                   onClick={() => {
                     cambiarIdioma("es");
@@ -123,7 +124,7 @@ export default function Navbar({
                 </button>
                 <button
                   type="button"
-                  aria-label={idioma === "en" ? "English" : "Inglés"}
+                  aria-label={nav?.aria?.idiomaEn}
                   aria-pressed={idioma === "en"}
                   onClick={() => {
                     cambiarIdioma("en");
@@ -135,10 +136,10 @@ export default function Navbar({
               </div>
             </div>
             <a className="ingresar-home" href="#ingresar" onClick={() => setAbierto(false)}>
-              {nav?.botones?.invitado?.ingresar || "Ingresar"}
+              {nav?.botones?.invitado?.ingresar}
             </a>
             <a className="boton-home primario" href="#registro" onClick={() => setAbierto(false)}>
-              {nav?.botones?.invitado?.crearCuenta || "Crear cuenta"}
+              {nav?.botones?.invitado?.crearCuenta}
             </a>
           </div>
         </nav>

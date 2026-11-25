@@ -8,6 +8,32 @@ const TRAZOS = {
   accesibilidad: <><circle cx="12" cy="4" r="2" /><path d="M4 8h16M12 6v8m0 0-4 7m4-7 4 7" /></>,
 };
 
-export default function Icono({ nombre }) {
-  return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{TRAZOS[nombre]}</svg>;
+export default function Icono({
+  nombre,
+  tamano = 20,
+  className,
+  trazo,
+  ...props
+}) {
+  const contenido = trazo ?? TRAZOS[nombre];
+  if (!contenido) return null;
+
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={tamano}
+      height={tamano}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+      {...props}
+    >
+      {contenido}
+    </svg>
+  );
 }

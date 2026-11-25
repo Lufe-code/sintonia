@@ -137,7 +137,7 @@
   .accesibilidad-capa {
     display: flex;
     align-items: flex-end;
-    background: #0009;
+    background: rgb(0 0 0 / 0.6);
     pointer-events: auto;
   }
 

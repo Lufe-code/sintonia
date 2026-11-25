@@ -1,6 +1,9 @@
 import "../styles/LogoSintonia.css";
 
-export default function LogoSintonia({ ariaLabel = "Sintonía, ir al inicio" }) {
+export default function LogoSintonia({
+  ariaLabel = "Sintonía, ir al inicio",
+  nombre = "sintonía",
+}) {
   return (
     <a className="logo-sintonia" href="#inicio" aria-label={ariaLabel}>
       <span className="logo-sintonia-emblema" aria-hidden="true">
@@ -9,7 +12,7 @@ export default function LogoSintonia({ ariaLabel = "Sintonía, ir al inicio" }) 
         <i />
         <i />
       </span>
-      <span className="logo-sintonia-nombre">sintonía</span>
+      <span className="logo-sintonia-nombre">{nombre}</span>
     </a>
   );
 }
