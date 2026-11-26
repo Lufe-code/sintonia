@@ -1,0 +1,488 @@
+.sitio-inicio-sesion {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.inicio-sesion {
+  display: grid;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: minmax(0, 44.2%) minmax(0, 55.8%);
+  padding: 0;
+  color: var(--texto-principal);
+  background: var(--fondo-base);
+}
+
+.inicio-sesion-columna-formulario {
+  display: grid;
+  min-width: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: 2% 3.4% 1.8%;
+  background: var(--fondo-base);
+}
+
+.inicio-sesion-logo-escritorio {
+  align-self: start;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia,
+.inicio-sesion-presentacion-movil .logo-sintonia {
+  gap: 0.45rem;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia-emblema,
+.inicio-sesion-presentacion-movil .logo-sintonia-emblema {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia-emblema i,
+.inicio-sesion-presentacion-movil .logo-sintonia-emblema i {
+  width: 2px;
+  height: 7px;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia-emblema i:first-child,
+.inicio-sesion-presentacion-movil .logo-sintonia-emblema i:first-child {
+  height: 5px;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia-emblema i:nth-child(2),
+.inicio-sesion-presentacion-movil .logo-sintonia-emblema i:nth-child(2) {
+  height: 10px;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia-emblema i:nth-child(3),
+.inicio-sesion-presentacion-movil .logo-sintonia-emblema i:nth-child(3) {
+  height: 8px;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia-emblema i:nth-child(4),
+.inicio-sesion-presentacion-movil .logo-sintonia-emblema i:nth-child(4) {
+  height: 5px;
+}
+
+.inicio-sesion-logo-escritorio .logo-sintonia-nombre,
+.inicio-sesion-presentacion-movil .logo-sintonia-nombre {
+  font-size: 0.88rem;
+}
+
+.inicio-sesion-contenido {
+  display: grid;
+  min-height: 0;
+  place-items: center start;
+}
+
+.inicio-sesion-presentacion-movil {
+  display: none;
+}
+
+.inicio-sesion-panel {
+  width: min(72%, 26rem);
+}
+
+.inicio-sesion-cabecera h2 {
+  margin: 0;
+  color: var(--texto-principal);
+  font-family: var(--fuente-syne);
+  font-size: clamp(1rem, 2.4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+}
+
+.inicio-sesion-cabecera p {
+  margin: 0.85rem 0 0;
+  color: var(--texto-secundario);
+  font-size: clamp(0.65rem, 0.95vw, 0.9rem);
+  line-height: 1.5;
+}
+
+.inicio-sesion-aviso {
+  margin-top: 1.25rem;
+  padding: 0.8rem;
+  border: 1px solid var(--estado-error);
+  border-radius: var(--radio-md);
+  color: var(--texto-principal);
+  background: var(--estado-error-suave);
+  font-size: 0.85rem;
+}
+
+.inicio-sesion-aviso strong {
+  display: block;
+  color: var(--estado-error);
+}
+
+.inicio-sesion-aviso p {
+  margin: 0.25rem 0 0;
+  color: var(--texto-principal);
+}
+
+.inicio-sesion-aviso button {
+  min-height: 2.25rem;
+  margin-top: 0.5rem;
+  padding-inline: 0.8rem;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio-completo);
+  color: var(--texto-principal);
+  background: var(--fondo-elevada);
+  font: inherit;
+  cursor: pointer;
+}
+
+.inicio-sesion-formulario {
+  display: grid;
+  gap: clamp(0.65rem, 1.6vw, 1.25rem);
+  margin-top: clamp(1.25rem, 3vw, 2rem);
+}
+
+.inicio-sesion-campo {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.inicio-sesion-campo > label {
+  color: var(--texto-principal);
+  font-size: clamp(0.65rem, 0.85vw, 0.875rem);
+  font-weight: 600;
+}
+
+.inicio-sesion-campo input {
+  width: 100%;
+  min-height: clamp(1.65rem, 3.6vw, 3rem);
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--borde-fuerte);
+  border-radius: var(--radio-md);
+  outline: 0;
+  color: var(--texto-principal);
+  background: var(--fondo-superficie);
+  font: inherit;
+  font-size: clamp(0.65rem, 0.85vw, 0.875rem);
+}
+
+.inicio-sesion-campo input::placeholder {
+  color: var(--texto-terciario);
+}
+
+.inicio-sesion-campo input:focus {
+  border-color: var(--marca-primario);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--marca-primario) 22%, transparent);
+}
+
+.inicio-sesion-campo input[aria-invalid="true"] {
+  border-color: var(--estado-error);
+}
+
+.inicio-sesion-clave {
+  position: relative;
+}
+
+.inicio-sesion-clave input {
+  padding-right: 2.8rem;
+}
+
+.inicio-sesion-ver-clave {
+  position: absolute;
+  top: 50%;
+  right: 0.55rem;
+  display: grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  place-items: center;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: var(--radio-sm);
+  color: var(--texto-secundario);
+  background: transparent;
+  cursor: pointer;
+}
+
+.inicio-sesion-ver-clave:hover,
+.inicio-sesion-ver-clave:focus-visible {
+  color: var(--texto-principal);
+}
+
+.inicio-sesion-error-campo {
+  color: var(--estado-error);
+  font-size: 0.75rem;
+}
+
+.inicio-sesion-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  font-size: clamp(0.58rem, 0.78vw, 0.78rem);
+}
+
+.inicio-sesion-mantener {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--texto-secundario);
+  cursor: pointer;
+}
+
+.inicio-sesion-mantener input {
+  width: 0.9rem;
+  height: 0.9rem;
+  margin: 0;
+  accent-color: var(--marca-primario);
+}
+
+.inicio-sesion-opciones a,
+.inicio-sesion-registro a {
+  color: var(--texto-marca);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.inicio-sesion-opciones a:hover,
+.inicio-sesion-registro a:hover {
+  color: var(--marca-primario-hover);
+}
+
+.inicio-sesion-enviar {
+  min-height: clamp(1.75rem, 4vw, 3rem);
+  padding: 0.45rem 1rem;
+  border: 0;
+  border-radius: var(--radio-completo);
+  color: var(--texto-sobre-marca);
+  background: var(--marca-primario);
+  font: inherit;
+  font-size: clamp(0.68rem, 0.9vw, 0.9rem);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.inicio-sesion-enviar:hover:not(:disabled) {
+  background: var(--marca-primario-hover);
+}
+
+.inicio-sesion-enviar:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.inicio-sesion-registro {
+  margin: 1rem 0 0;
+  color: var(--texto-secundario);
+  font-size: clamp(0.6rem, 0.8vw, 0.8rem);
+  text-align: center;
+}
+
+.inicio-sesion-legal {
+  color: var(--texto-terciario);
+  font-size: 0.62rem;
+}
+
+.inicio-sesion-presentacion-escritorio {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 6.5%;
+  background: var(--fondo-superficie);
+}
+
+.inicio-sesion-mosaico {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.4rem, 1vw, 1rem);
+}
+
+.inicio-sesion-mosaico img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: clamp(0.45rem, 1vw, 0.9rem);
+  object-fit: cover;
+}
+
+.inicio-sesion-presentacion-texto {
+  margin-top: clamp(0.9rem, 2vw, 1.75rem);
+}
+
+.inicio-sesion-presentacion-texto h1 {
+  margin: 0;
+  color: var(--texto-principal);
+  font-family: var(--fuente-syne);
+  font-size: clamp(1.25rem, 2.6vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+}
+
+.inicio-sesion-presentacion-texto p {
+  margin: clamp(0.75rem, 1.8vw, 1.5rem) 0 0;
+  color: var(--texto-secundario);
+  font-size: clamp(0.68rem, 1vw, 1rem);
+  line-height: 1.5;
+}
+
+.inicio-sesion-sin-textos {
+  min-height: 100%;
+}
+
+.sitio-inicio-sesion .pie-publico,
+.sitio-inicio-sesion > .cabecera-home {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .sitio-inicio-sesion {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .inicio-sesion {
+    display: block;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: clamp(1.6875rem, 13.85vw, 3.375rem) 0 clamp(0.5rem, 4.1vw, 1rem);
+  }
+
+  .inicio-sesion-columna-formulario {
+    display: contents;
+  }
+
+  .inicio-sesion-logo-escritorio,
+  .inicio-sesion-legal,
+  .inicio-sesion-presentacion-escritorio {
+    display: none;
+  }
+
+  .inicio-sesion-contenido {
+    display: contents;
+  }
+
+  .inicio-sesion-presentacion-movil {
+    display: flex;
+    width: min(82vw, 24rem);
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 auto clamp(0.5rem, 5vw, 1.25rem);
+  }
+
+  .inicio-sesion-presentacion-movil .logo-sintonia {
+    gap: clamp(0.45rem, 2.3vw, 0.5625rem);
+  }
+
+  .inicio-sesion-presentacion-movil .logo-sintonia-emblema {
+    width: clamp(1.125rem, 7.2vw, 1.75rem);
+    height: clamp(1.125rem, 7.2vw, 1.75rem);
+  }
+
+  .inicio-sesion-presentacion-movil .logo-sintonia-emblema i {
+    width: clamp(2px, 1.03vw, 4px);
+    height: clamp(7px, 3.59vw, 14px);
+  }
+
+  .inicio-sesion-presentacion-movil .logo-sintonia-emblema i:first-child,
+  .inicio-sesion-presentacion-movil .logo-sintonia-emblema i:nth-child(4) {
+    height: clamp(5px, 2.56vw, 10px);
+  }
+
+  .inicio-sesion-presentacion-movil .logo-sintonia-emblema i:nth-child(2) {
+    height: clamp(10px, 5.13vw, 20px);
+  }
+
+  .inicio-sesion-presentacion-movil .logo-sintonia-emblema i:nth-child(3) {
+    height: clamp(8px, 4.1vw, 16px);
+  }
+
+  .inicio-sesion-presentacion-movil .logo-sintonia-nombre {
+    font-size: clamp(0.88rem, 5.13vw, 1.25rem);
+  }
+
+  .inicio-sesion-ilustracion-movil {
+    width: 100%;
+    margin-bottom: clamp(-2.4rem, -9.85vw, -1.2rem);
+  }
+
+  .inicio-sesion-ilustracion-movil img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+
+  .inicio-sesion-panel {
+    width: min(82vw, 24rem);
+    margin-inline: auto;
+  }
+
+  .inicio-sesion-cabecera h2 {
+    font-size: clamp(1.125rem, 9.2vw, 2.25rem);
+    line-height: 1;
+  }
+
+  .inicio-sesion-cabecera p {
+    margin-top: clamp(0.625rem, 3.2vw, 1.25rem);
+    font-size: clamp(0.75rem, 6.15vw, 1.5rem);
+    line-height: 1.2;
+  }
+
+  .inicio-sesion-formulario {
+    gap: clamp(0.45rem, 3.7vw, 0.9rem);
+    margin-top: clamp(0.125rem, 1.03vw, 0.25rem);
+  }
+
+  .inicio-sesion-campo {
+    gap: clamp(0.0625rem, 0.52vw, 0.125rem);
+  }
+
+  .inicio-sesion-campo > label {
+    font-size: clamp(0.6rem, 4.92vw, 1.2rem);
+    line-height: 1;
+  }
+
+  .inicio-sesion-campo input {
+    min-height: clamp(1.5rem, 12.3vw, 3rem);
+    padding: clamp(0.2rem, 2vw, 0.4rem) clamp(0.55rem, 2.8vw, 1.1rem);
+    font-size: clamp(0.7rem, 5.75vw, 1.4rem);
+  }
+
+  .inicio-sesion-opciones {
+    gap: clamp(0.3rem, 2.46vw, 0.6rem);
+    font-size: clamp(0.6rem, 4.92vw, 1.2rem);
+    line-height: 1;
+  }
+
+  .inicio-sesion-mantener {
+    gap: clamp(0.35rem, 2.87vw, 0.7rem);
+  }
+
+  .inicio-sesion-mantener input {
+    width: clamp(0.9rem, 7.38vw, 1.8rem);
+    height: clamp(0.9rem, 7.38vw, 1.8rem);
+  }
+
+  .inicio-sesion-enviar {
+    min-height: clamp(1.5rem, 12.3vw, 3rem);
+    margin-top: clamp(0.125rem, 1.03vw, 0.25rem);
+    padding: clamp(0.1rem, 1.03vw, 0.2rem) clamp(1rem, 5.13vw, 2rem);
+    font-size: clamp(0.7rem, 5.75vw, 1.4rem);
+  }
+
+  .inicio-sesion-registro {
+    margin-top: clamp(0.75rem, 6.15vw, 1.5rem);
+    font-size: clamp(0.6rem, 4.92vw, 1.2rem);
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 360px) {
+  .inicio-sesion-presentacion-movil,
+  .inicio-sesion-panel {
+    width: 82vw;
+  }
+}

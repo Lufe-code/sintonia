@@ -1,0 +1,355 @@
+.detalle-album-pagina.ancho-home {
+  width: calc(100% - 12px);
+  max-width: none;
+}
+
+.detalle-album-pagina {
+  flex: 1;
+  margin: 8px auto 6px;
+  padding: 24px 20px 36px;
+  border-radius: var(--radio-lg);
+  background: var(--fondo-superficie);
+}
+
+.detalle-album-volver {
+  display: none;
+}
+
+.detalle-album-cabecera {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  align-items: end;
+  gap: 28px;
+  margin-bottom: 24px;
+}
+
+.detalle-album-portada {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: var(--sombra-tarjeta);
+}
+
+.detalle-album-identidad {
+  min-width: 0;
+}
+
+.detalle-album-etiqueta {
+  display: inline-flex;
+  margin-bottom: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radio-completo);
+  color: var(--texto-secundario);
+  background: var(--fondo-sutil);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.detalle-album-identidad h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.detalle-album-identidad p {
+  margin: 10px 0 0;
+  color: var(--texto-secundario);
+  font-size: 0.875rem;
+}
+
+.detalle-album-tabla-cabecera,
+.detalle-album-pista {
+  display: grid;
+  grid-template-columns: 24px 40px minmax(0, 1fr) minmax(100px, 220px) 44px;
+  align-items: center;
+  gap: 12px;
+}
+
+.detalle-album-tabla-cabecera {
+  min-height: 32px;
+  padding: 0 16px 8px;
+  border-bottom: 1px solid var(--borde-sutil);
+  color: var(--texto-terciario);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.detalle-album-tabla-cabecera > :first-child {
+  text-align: center;
+}
+
+.detalle-album-columna-reproducciones {
+  grid-column: 4;
+}
+
+.detalle-album-columna-duracion {
+  grid-column: 5;
+}
+
+.detalle-album-lista ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detalle-album-pista {
+  min-height: 52px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--borde-sutil);
+}
+
+.detalle-album-numero,
+.detalle-album-reproducciones,
+.detalle-album-duracion {
+  color: var(--texto-terciario);
+  font-size: 0.75rem;
+}
+
+.detalle-album-numero,
+.detalle-album-duracion {
+  text-align: center;
+}
+
+.detalle-album-pista-portada {
+  display: block;
+  width: 40px;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.detalle-album-pista-texto {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.detalle-album-pista-texto strong,
+.detalle-album-pista-texto > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalle-album-pista-texto strong {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.detalle-album-pista-texto > span {
+  color: var(--texto-secundario);
+  font-size: 0.75rem;
+}
+
+.detalle-album-pista:hover {
+  background: var(--fondo-elevada);
+}
+
+.detalle-album-legal {
+  display: grid;
+  gap: 2px;
+  margin-top: 20px;
+  color: var(--texto-secundario);
+  font-size: 0.75rem;
+}
+
+.detalle-album-legal p {
+  margin: 0;
+  color: var(--texto-terciario);
+  font-size: 0.68rem;
+}
+
+.detalle-album-relacionados {
+  margin-top: 30px;
+}
+
+.detalle-album-relacionados-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.detalle-album-relacionados-cabecera h2 {
+  min-width: 0;
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.detalle-album-relacionados-cabecera > a {
+  flex: 0 0 auto;
+  color: var(--texto-secundario);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.detalle-album-relacionados-lista {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.detalle-album-relacionado {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.detalle-album-relacionado img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin-bottom: 4px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.detalle-album-relacionado strong,
+.detalle-album-relacionado span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalle-album-relacionado strong {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.detalle-album-relacionado span {
+  color: var(--texto-secundario);
+  font-size: 0.68rem;
+}
+
+.detalle-album-relacionado:hover {
+  color: var(--marca-primario);
+}
+
+.detalle-album-estado {
+  color: var(--texto-secundario);
+}
+
+.detalle-album-no-encontrado {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding-block: 36px;
+}
+
+.detalle-album-no-encontrado h1,
+.detalle-album-no-encontrado p {
+  margin: 0;
+}
+
+.detalle-album-no-encontrado p {
+  color: var(--texto-secundario);
+}
+
+@media (max-width: 900px) {
+  .detalle-album-tabla-cabecera,
+  .detalle-album-pista {
+    grid-template-columns: 24px 40px minmax(0, 1fr) minmax(90px, 160px) 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  .detalle-album-pagina.ancho-home {
+    width: 100%;
+  }
+
+  .detalle-album-pagina {
+    margin: 0;
+    padding: 12px 12px 28px;
+    border-radius: 0;
+  }
+
+  .detalle-album-volver {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    margin: -4px 0 6px -8px;
+    border-radius: var(--radio-completo);
+    color: var(--texto-principal);
+    font-size: 1.5rem;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  .detalle-album-cabecera {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .detalle-album-portada {
+    width: min(200px, 62vw);
+    justify-self: center;
+    border-radius: 12px;
+  }
+
+  .detalle-album-etiqueta {
+    margin-bottom: 6px;
+    padding: 3px 8px;
+    color: var(--marca-secundario);
+    background: var(--marca-secundario-suave);
+    font-size: 0.68rem;
+  }
+
+  .detalle-album-identidad h1 {
+    font-size: clamp(1.7rem, 8vw, 1.9rem);
+    line-height: 1.2;
+  }
+
+  .detalle-album-identidad p {
+    margin-top: 4px;
+    font-size: 0.75rem;
+  }
+
+  .detalle-album-tabla-cabecera {
+    display: none;
+  }
+
+  .detalle-album-pista {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 12px;
+    min-height: 58px;
+    padding: 6px 0;
+    border-bottom: 0;
+  }
+
+  .detalle-album-numero,
+  .detalle-album-reproducciones,
+  .detalle-album-duracion {
+    display: none;
+  }
+
+  .detalle-album-pista-portada {
+    width: 48px;
+    border-radius: 8px;
+  }
+
+  .detalle-album-pista-texto strong {
+    font-size: 0.875rem;
+  }
+
+  .detalle-album-pista-texto > span {
+    font-size: 0.75rem;
+  }
+
+  .detalle-album-legal,
+  .detalle-album-relacionados {
+    display: none;
+  }
+}

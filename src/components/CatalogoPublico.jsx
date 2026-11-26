@@ -11,6 +11,7 @@ import imagenGeneroFrailejonAcustico from "../assets/portada tarjetas/album-frai
 import imagenGeneroEnVivoEnElRuiz from "../assets/portada tarjetas/album-en-vivo-en-el-ruiz.png";
 import imagenGeneroPleamar from "../assets/portada tarjetas/album-pleamar.png";
 import imagenGeneroInstrumental from "../assets/portada tarjetas/genero-instrumental.png";
+import { obtenerPortadaAlbum } from "../portadasAlbum.js";
 import "../styles/CatalogoPublico.css";
 
 const IMAGENES_GENERO_ORDENADAS = [
@@ -28,14 +29,6 @@ const IMAGENES_GENERO_ORDENADAS = [
   imagenGeneroInstrumental,
 ];
 const LIMITE_ALBUMES_DESTACADOS = 6;
-const PORTADAS_ALBUMES_DESTACADOS = [
-  portadaAlbumUno,
-  portadaAlbumDos,
-  portadaAlbumTres,
-  portadaAlbumCuatro,
-  portadaAlbumUno,
-  portadaAlbumCinco,
-];
 
 function asegurarLista(valor) {
   return Array.isArray(valor) ? valor : [];
@@ -432,23 +425,9 @@ export default function CatalogoPublico({
           </div>
           <div className="catalogo-albumes-lista">
             {albumesVisibles.map((album, indiceAlbum) => {
-              const portadaApi = obtenerImagenDesdeApi(album, [
-                "portada.url",
-                "portada.imagenUrl",
-                "portada.src",
-                "portada.imagen",
-                "imagen",
-                "imagenUrl",
-                "urlPortada",
-                "cover",
-              ]);
-              const portadaAlbum = portadaApi
-                || (esVistaDestacados
-                  ? PORTADAS_ALBUMES_DESTACADOS[indiceAlbum % PORTADAS_ALBUMES_DESTACADOS.length]
-                  : IMAGENES_GENERO_ORDENADAS[indiceAlbum % IMAGENES_GENERO_ORDENADAS.length]);
-
-              return (
-                <article className="tarjeta-album" key={album?.id || `${album?.titulo || "album"}-${indiceAlbum}`}>
+              const portadaAlbum = obtenerPortadaAlbum(album, indiceAlbum);
+              const contenidoTarjeta = (
+                <>
                   <img className="portada-album portada-catalogo" src={portadaAlbum} alt="" loading="lazy" decoding="async" />
                   <div className="datos-album">
                     <div>
@@ -460,6 +439,20 @@ export default function CatalogoPublico({
                   <time dateTime={album?.fechaPublicacion}>
                     {formatearFechaPublicacion(album?.fechaPublicacion, idioma)}
                   </time>
+                </>
+              );
+
+              return album?.id ? (
+                <a
+                  className="tarjeta-album tarjeta-album-enlace"
+                  href={`#album/${encodeURIComponent(album.id)}`}
+                  key={album.id}
+                >
+                  {contenidoTarjeta}
+                </a>
+              ) : (
+                <article className="tarjeta-album" key={`${album?.titulo || "album"}-${indiceAlbum}`}>
+                  {contenidoTarjeta}
                 </article>
               );
             })}

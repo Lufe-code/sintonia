@@ -12,9 +12,9 @@ import imagenGeneroEnVivoEnElRuiz from "../assets/portada tarjetas/album-en-vivo
 import imagenGeneroPleamar from "../assets/portada tarjetas/album-pleamar.png";
 import imagenGeneroInstrumental from "../assets/portada tarjetas/genero-instrumental.png";
 import imagenPortadaInicio from "../assets/icono portada/inicio-collage.png";
+import { obtenerPortadaAlbum } from "../portadasAlbum.js";
 import "../styles/InicioPublico.css";
 
-const PORTADAS_DESTACADOS = [portada1, portada2, portada3, portada4, portada1, portada5];
 const IMAGENES_GENERO_ORDENADAS = [
   imagenGeneroCantoDeGuadua,
   portada1,
@@ -77,7 +77,7 @@ function PortadaAlbum({ album, indice }) {
   return (
     <img
       className="portada-album portada-destacada"
-      src={PORTADAS_DESTACADOS[indice % PORTADAS_DESTACADOS.length]}
+      src={obtenerPortadaAlbum(album, indice)}
       alt=""
       loading="lazy"
       decoding="async"
@@ -100,6 +100,7 @@ export default function InicioPublico({
   cargando,
   error,
   recargar,
+  autenticado = false,
 }) {
   const hero = textos?.hero;
   const cifras = textos?.cifras;
@@ -136,9 +137,11 @@ export default function InicioPublico({
           <h1 id="titulo-inicio">{hero?.titulo}</h1>
           <p>{hero?.subtitulo}</p>
           <div className="inicio-acciones">
-            <a className="boton-home primario" href="#registro">
-              {hero?.botones?.crearCuentaGratis}
-            </a>
+            {!autenticado && (
+              <a className="boton-home primario" href="#registro">
+                {hero?.botones?.crearCuentaGratis}
+              </a>
+            )}
             <a className="boton-home secundario" href="#catalogo">
               {hero?.botones?.explorarCatalogo}
             </a>
@@ -198,21 +201,37 @@ export default function InicioPublico({
           </p>
         ) : albumesFiltrados.length > 0 ? (
           <div className="rejilla-albumes ancho-home">
-            {albumesFiltrados.map((album, indice) => (
-              <article className="tarjeta-album" key={album.id}>
-                <PortadaAlbum album={album} indice={indice} />
-                <div className="datos-album">
-                  <div>
-                    <h3>{album.titulo}</h3>
-                    <p>{album.artista?.nombre}</p>
+            {albumesFiltrados.map((album, indice) => {
+              const contenidoTarjeta = (
+                <>
+                  <PortadaAlbum album={album} indice={indice} />
+                  <div className="datos-album">
+                    <div>
+                      <h3>{album.titulo}</h3>
+                      <p>{album.artista?.nombre}</p>
+                    </div>
+                    <span>{album.genero}</span>
                   </div>
-                  <span>{album.genero}</span>
-                </div>
-                <time dateTime={album.fechaPublicacion}>
-                  {fechaAlbum(album.fechaPublicacion, idioma)}
-                </time>
-              </article>
-            ))}
+                  <time dateTime={album.fechaPublicacion}>
+                    {fechaAlbum(album.fechaPublicacion, idioma)}
+                  </time>
+                </>
+              );
+
+              return album?.id ? (
+                <a
+                  className="tarjeta-album tarjeta-album-enlace"
+                  href={`#album/${encodeURIComponent(album.id)}`}
+                  key={album.id}
+                >
+                  {contenidoTarjeta}
+                </a>
+              ) : (
+                <article className="tarjeta-album" key={`${album.titulo}-${indice}`}>
+                  {contenidoTarjeta}
+                </article>
+              );
+            })}
           </div>
         ) : (
           <p className="estado-catalogo ancho-home">{estados?.vacio?.generico?.mensaje}</p>
@@ -256,18 +275,20 @@ export default function InicioPublico({
         </div>
       </section>
 
-      <section className="inicio-cta">
-        <div className="inicio-cta-interior ancho-home">
-          <div>
-            {cta?.etiqueta && <span className="inicio-etiqueta">{cta.etiqueta}</span>}
-            <h2>{cta?.titulo}</h2>
-            <p>{cta?.texto}</p>
+      {!autenticado && (
+        <section className="inicio-cta">
+          <div className="inicio-cta-interior ancho-home">
+            <div>
+              {cta?.etiqueta && <span className="inicio-etiqueta">{cta.etiqueta}</span>}
+              <h2>{cta?.titulo}</h2>
+              <p>{cta?.texto}</p>
+            </div>
+            <a className="boton-home primario" href="#registro">
+              {cta?.botones?.crearCuentaGratis}
+            </a>
           </div>
-          <a className="boton-home primario" href="#registro">
-            {cta?.botones?.crearCuentaGratis}
-          </a>
-        </div>
-      </section>
+        </section>
+      )}
       {cargandoTextos && (
         <span className="sr-only" role="status">
           {estados?.cargando?.mensaje}
