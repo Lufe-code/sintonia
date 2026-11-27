@@ -3,27 +3,9 @@ import { API_BASE_URL } from "../config/api.js";
 import AvisoEstado from "./AvisoEstado.jsx";
 import Icono from "./Icono.jsx";
 import LogoSintonia from "./LogoSintonia.jsx";
+import Portada from "./Portada.jsx";
 import imagenPresentacion from "../assets/icono portada/Collage.png";
-import portadaCantoDeGuadua from "../assets/portada tarjetas/album-canto-de-guadua.png";
-import portadaFrailejonAcustico from "../assets/portada tarjetas/album-frailejon-acustico.png";
-import portadaMareaViva from "../assets/portada tarjetas/album-marea-viva.png";
-import portadaPleamar from "../assets/portada tarjetas/album-pleamar.png";
-import portadaUno from "../assets/portada tarjetas/1.png";
-import portadaDos from "../assets/portada tarjetas/2.png";
-import portadaTres from "../assets/portada tarjetas/3.png";
-import portadaCuatro from "../assets/portada tarjetas/4.png";
 import "../styles/InicioSesionPublico.css";
-
-const PORTADAS_PRESENTACION = [
-  portadaCantoDeGuadua,
-  portadaDos,
-  portadaUno,
-  portadaCuatro,
-  portadaTres,
-  portadaPleamar,
-  portadaMareaViva,
-  portadaFrailejonAcustico,
-];
 
 function obtenerMensajeError(textos, codigo, respuesta) {
   const pagina = textos?.paginas?.ingresar;
@@ -73,6 +55,8 @@ export default function InicioSesionPublico({
   cargandoTextos,
   errorTextos,
   recargarTextos,
+  albumes = [],
+  cargandoAlbumes,
   onIniciarSesion,
   pie,
 }) {
@@ -88,6 +72,8 @@ export default function InicioSesionPublico({
   const [cargando, setCargando] = useState(false);
   const [aviso, setAviso] = useState(null);
   const [erroresCampos, setErroresCampos] = useState({});
+  const albumesPresentacion = Array.isArray(albumes) ? albumes.slice(0, 8) : [];
+  const mostrarPortadasDeRespaldo = cargandoAlbumes && albumesPresentacion.length === 0;
 
   useEffect(() => {
     setAviso(null);
@@ -333,9 +319,16 @@ export default function InicioSesionPublico({
         aria-label={pagina.presentacion?.titulo}
       >
         <div className="inicio-sesion-mosaico" aria-hidden="true">
-          {PORTADAS_PRESENTACION.map((portada, indice) => (
-            <img src={portada} alt="" key={`${portada}-${indice}`} decoding="async" />
-          ))}
+          {mostrarPortadasDeRespaldo
+            ? Array.from({ length: 8 }, (_, indice) => (
+                <Portada key={`respaldo-${indice}`} />
+              ))
+            : albumesPresentacion.map((album, indice) => (
+                <Portada
+                  key={album?.id || `album-${indice}`}
+                  portada={album?.portada}
+                />
+              ))}
         </div>
         <div className="inicio-sesion-presentacion-texto">
           <h1>{pagina.presentacion?.titulo}</h1>

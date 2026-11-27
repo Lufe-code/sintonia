@@ -278,6 +278,8 @@ function App() {
           cargandoTextos={datos.cargando}
           errorTextos={datos.error}
           recargarTextos={datos.recargar}
+          albumes={inicio.albumesCatalogo}
+          cargandoAlbumes={inicio.cargando}
           onIniciarSesion={(usuario, token, mantenerSesion) => {
             sesion.iniciarSesion(usuario, token, mantenerSesion);
             window.history.replaceState(null, "", "#inicio");

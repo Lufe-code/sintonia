@@ -1,33 +1,7 @@
 ﻿import { useEffect, useMemo, useState } from "react";
-import portadaAlbumUno from "../assets/portada tarjetas/1.png";
-import portadaAlbumDos from "../assets/portada tarjetas/2.png";
-import portadaAlbumTres from "../assets/portada tarjetas/3.png";
-import portadaAlbumCuatro from "../assets/portada tarjetas/4.png";
-import portadaAlbumCinco from "../assets/portada tarjetas/5.png";
-import imagenGeneroCantoDeGuadua from "../assets/portada tarjetas/album-canto-de-guadua.png";
-import imagenGeneroMusicaAndina from "../assets/portada tarjetas/genero-musica-andina.png";
-import imagenGeneroMareaViva from "../assets/portada tarjetas/album-marea-viva.png";
-import imagenGeneroFrailejonAcustico from "../assets/portada tarjetas/album-frailejon-acustico.png";
-import imagenGeneroEnVivoEnElRuiz from "../assets/portada tarjetas/album-en-vivo-en-el-ruiz.png";
-import imagenGeneroPleamar from "../assets/portada tarjetas/album-pleamar.png";
-import imagenGeneroInstrumental from "../assets/portada tarjetas/genero-instrumental.png";
-import { obtenerPortadaAlbum } from "../portadasAlbum.js";
+import Portada from "./Portada.jsx";
 import "../styles/CatalogoPublico.css";
 
-const IMAGENES_GENERO_ORDENADAS = [
-  imagenGeneroCantoDeGuadua,
-  portadaAlbumUno,
-  portadaAlbumDos,
-  portadaAlbumCuatro,
-  portadaAlbumCinco,
-  portadaAlbumTres,
-  imagenGeneroMusicaAndina,
-  imagenGeneroMareaViva,
-  imagenGeneroFrailejonAcustico,
-  imagenGeneroEnVivoEnElRuiz,
-  imagenGeneroPleamar,
-  imagenGeneroInstrumental,
-];
 const LIMITE_ALBUMES_DESTACADOS = 6;
 
 function asegurarLista(valor) {
@@ -82,24 +56,6 @@ function obtenerImagenDesdeApi(registro, claves) {
     }
   }
   return "";
-}
-
-function obtenerIlustracionGenero(genero, indiceGenero) {
-  const imagenApi = obtenerImagenDesdeApi(genero, [
-    "ilustracion",
-    "imagen",
-    "imagenUrl",
-    "urlImagen",
-    "portada.imagen",
-    "portada.imagenUrl",
-    "portada.url",
-  ]);
-
-  if (imagenApi) {
-    return imagenApi;
-  }
-
-  return IMAGENES_GENERO_ORDENADAS[indiceGenero % IMAGENES_GENERO_ORDENADAS.length];
 }
 
 function obtenerColorGenero(genero) {
@@ -329,7 +285,6 @@ export default function CatalogoPublico({
         <div className="rejilla-generos">
           {listaGeneros.map((genero, indiceGenero) => {
             const generoEstaActivo = generoActivo?.id === genero?.id;
-            const ilustracionGenero = obtenerIlustracionGenero(genero, indiceGenero);
 
             return (
               <a
@@ -339,12 +294,9 @@ export default function CatalogoPublico({
                 aria-current={generoEstaActivo ? "page" : undefined}
                 style={{ "--color-genero": obtenerColorGenero(genero) }}
               >
-                <img
+                <Portada
                   className="genero-ilustracion"
-                  src={ilustracionGenero}
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
+                  portada={genero?.portada}
                 />
                 <span className="genero-nombre">{genero?.nombre}</span>
               </a>
@@ -425,10 +377,12 @@ export default function CatalogoPublico({
           </div>
           <div className="catalogo-albumes-lista">
             {albumesVisibles.map((album, indiceAlbum) => {
-              const portadaAlbum = obtenerPortadaAlbum(album, indiceAlbum);
               const contenidoTarjeta = (
                 <>
-                  <img className="portada-album portada-catalogo" src={portadaAlbum} alt="" loading="lazy" decoding="async" />
+                  <Portada
+                    className="portada-album portada-catalogo"
+                    portada={album?.portada}
+                  />
                   <div className="datos-album">
                     <div>
                       <h3>{album?.titulo}</h3>

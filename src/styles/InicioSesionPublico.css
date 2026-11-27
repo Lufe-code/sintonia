@@ -297,12 +297,12 @@
   gap: clamp(0.4rem, 1vw, 1rem);
 }
 
-.inicio-sesion-mosaico img {
+.inicio-sesion-mosaico svg {
   display: block;
   width: 100%;
   aspect-ratio: 1;
   border-radius: clamp(0.45rem, 1vw, 0.9rem);
-  object-fit: cover;
+  overflow: hidden;
 }
 
 .inicio-sesion-presentacion-texto {

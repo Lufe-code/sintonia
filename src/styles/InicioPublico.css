@@ -100,10 +100,6 @@
   box-shadow: var(--sombra-tarjeta);
 }
 
-.portada-destacada {
-  object-fit: cover;
-}
-
 .collage-nota {
   position: absolute;
   z-index: 3;
@@ -237,7 +233,6 @@
   bottom: -10px;
   width: clamp(56px, 34%, 84px);
   aspect-ratio: 1;
-  object-fit: cover;
   border-radius: 8px;
   transform: rotate(12deg);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);

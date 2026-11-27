@@ -1,5 +1,5 @@
 import AvisoEstado from "./AvisoEstado.jsx";
-import { obtenerPortadaAlbum } from "../portadasAlbum.js";
+import Portada from "./Portada.jsx";
 import "../styles/DetalleAlbumPublico.css";
 
 function asegurarLista(valor) {
@@ -131,11 +131,6 @@ function obtenerTextosDetalle(textos) {
   };
 }
 
-function obtenerIndiceAlbum(album, albumes) {
-  const identificador = album?.id;
-  return albumes.findIndex((otroAlbum) => otroAlbum?.id === identificador);
-}
-
 function obtenerAlbumesRelacionados(album, albumes) {
   const artistaId = album?.artista?.id ?? album?.artist?.id;
   const artista = obtenerArtista(album).toLocaleLowerCase();
@@ -175,7 +170,7 @@ function DetallePista({ pista, indice, portada, artistaAlbum, idioma }) {
   return (
     <li className="detalle-album-pista" key={pista?.id || `${titulo}-${indice}`}>
       <span className="detalle-album-numero">{pista?.numero ?? indice + 1}</span>
-      <img className="detalle-album-pista-portada" src={portada} alt="" loading="lazy" decoding="async" />
+      <Portada className="detalle-album-pista-portada" portada={portada} />
       <span className="detalle-album-pista-texto">
         <strong>{titulo}</strong>
         <span>{artista}</span>
@@ -186,7 +181,7 @@ function DetallePista({ pista, indice, portada, artistaAlbum, idioma }) {
   );
 }
 
-function TarjetaAlbumRelacionado({ album, indice, idioma, textos }) {
+function TarjetaAlbumRelacionado({ album, idioma, textos }) {
   const fecha = album?.fechaPublicacion || album?.releaseDate;
   const titulo = obtenerPrimerTextoValido(album?.titulo, album?.title, album?.nombre);
   const anio = obtenerAnio(fecha, idioma);
@@ -199,11 +194,9 @@ function TarjetaAlbumRelacionado({ album, indice, idioma, textos }) {
 
   return (
     <a className="detalle-album-relacionado" href={`#album/${encodeURIComponent(album.id)}`}>
-      <img
-        src={obtenerPortadaAlbum(album, indice)}
-        alt=""
-        loading="lazy"
-        decoding="async"
+      <Portada
+        className="detalle-album-relacionado-portada"
+        portada={album?.portada}
       />
       <strong>{titulo}</strong>
       {subtitulo && <span>{subtitulo}</span>}
@@ -230,8 +223,7 @@ export default function DetalleAlbumPublico({
   const artista = obtenerArtista(album);
   const fecha = album?.fechaPublicacion || album?.releaseDate;
   const anio = obtenerAnio(fecha, idioma);
-  const indiceAlbum = obtenerIndiceAlbum(album, listaAlbumes);
-  const portada = obtenerPortadaAlbum(album, indiceAlbum >= 0 ? indiceAlbum : undefined);
+  const portada = album?.portada;
   const albumesRelacionados = album ? obtenerAlbumesRelacionados(album, listaAlbumes) : [];
   const cantidadPistas = album?.totalPistas ?? pistas.length;
   const segundosTotal = obtenerDuracionTotalSegundos(album, pistas);
@@ -311,7 +303,7 @@ export default function DetalleAlbumPublico({
       ) : album ? (
         <>
           <section className="detalle-album-cabecera">
-            <img className="detalle-album-portada" src={portada} alt="" />
+            <Portada className="detalle-album-portada" portada={portada} />
             <div className="detalle-album-identidad">
               {etiquetaTipoAlbum && (
                 <span className="detalle-album-etiqueta">{etiquetaTipoAlbum}</span>
@@ -366,7 +358,6 @@ export default function DetalleAlbumPublico({
                 {albumesRelacionados.map((albumRelacionado) => (
                   <TarjetaAlbumRelacionado
                     album={albumRelacionado}
-                    indice={obtenerIndiceAlbum(albumRelacionado, listaAlbumes)}
                     idioma={idioma}
                     textos={detalleTextos}
                     key={albumRelacionado.id}

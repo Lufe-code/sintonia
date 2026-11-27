@@ -27,8 +27,8 @@
   display: block;
   width: 100%;
   aspect-ratio: 1;
+  overflow: hidden;
   border-radius: 12px;
-  object-fit: cover;
   box-shadow: var(--sombra-tarjeta);
 }
 
@@ -120,8 +120,8 @@
   display: block;
   width: 40px;
   aspect-ratio: 1;
+  overflow: hidden;
   border-radius: 6px;
-  object-fit: cover;
 }
 
 .detalle-album-pista-texto {
@@ -205,13 +205,13 @@
   text-decoration: none;
 }
 
-.detalle-album-relacionado img {
+.detalle-album-relacionado-portada {
   display: block;
   width: 100%;
   aspect-ratio: 1;
   margin-bottom: 4px;
+  overflow: hidden;
   border-radius: 10px;
-  object-fit: cover;
 }
 
 .detalle-album-relacionado strong,
