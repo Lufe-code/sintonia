@@ -12,10 +12,15 @@ export default function Navbar({
   accesibilidadAbierta,
   alternarTexto,
   onBuscar,
+  usuario,
+  sesionCargando,
+  onCerrarSesion,
 }) {
   const [abierto, setAbierto] = useState(false);
+  const [menuCuentaAbierto, setMenuCuentaAbierto] = useState(false);
   const [consulta, setConsulta] = useState("");
   const boton = useRef(null);
+  const cuentaRef = useRef(null);
   const id = useId();
   const nav = textos?.navbar;
   const menuMovil = textos?.menuMovil;
@@ -30,6 +35,19 @@ export default function Navbar({
     };
   }, [abierto]);
 
+  useEffect(() => {
+    if (!menuCuentaAbierto) return undefined;
+
+    function cerrarAlHacerClickFuera(evento) {
+      if (!cuentaRef.current?.contains(evento.target)) {
+        setMenuCuentaAbierto(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", cerrarAlHacerClickFuera);
+    return () => document.removeEventListener("pointerdown", cerrarAlHacerClickFuera);
+  }, [menuCuentaAbierto]);
+
   function enviarBusqueda(evento) {
     evento.preventDefault();
     onBuscar(consulta);
@@ -37,14 +55,21 @@ export default function Navbar({
   }
 
   if (!nav) return null;
+  const nombreUsuario = usuario?.nombre || "";
+  const inicialesUsuario = usuario?.iniciales || "";
 
   return (
     <header
       className={`cabecera-home${abierto ? " menu-movil-abierto" : ""}`}
       onKeyDown={(evento) => {
-        if (evento.key === "Escape" && abierto) {
-          setAbierto(false);
-          boton.current?.focus();
+        if (evento.key === "Escape") {
+          if (menuCuentaAbierto) {
+            setMenuCuentaAbierto(false);
+            cuentaRef.current?.querySelector("button")?.focus();
+          } else if (abierto) {
+            setAbierto(false);
+            boton.current?.focus();
+          }
         }
       }}
     >
@@ -135,12 +160,62 @@ export default function Navbar({
                 </button>
               </div>
             </div>
-            <a className="ingresar-home" href="#ingresar" onClick={() => setAbierto(false)}>
-              {nav?.botones?.invitado?.ingresar}
-            </a>
-            <a className="boton-home primario" href="#registro" onClick={() => setAbierto(false)}>
-              {nav?.botones?.invitado?.crearCuenta}
-            </a>
+            {usuario ? (
+              <div className="cuenta-home" ref={cuentaRef}>
+                <button
+                  className="cuenta-home-boton"
+                  type="button"
+                  aria-label={nav?.usuario?.menu}
+                  aria-haspopup="menu"
+                  aria-expanded={menuCuentaAbierto}
+                  onClick={() => setMenuCuentaAbierto((valor) => !valor)}
+                >
+                  <span
+                    className="cuenta-home-avatar"
+                    aria-hidden="true"
+                  >
+                    {inicialesUsuario}
+                  </span>
+                </button>
+                {menuCuentaAbierto && (
+                  <div className="cuenta-home-menu" role="menu">
+                    <div className="cuenta-home-perfil">
+                      <span
+                        className="cuenta-home-avatar cuenta-home-avatar-menu"
+                        aria-hidden="true"
+                      >
+                        {inicialesUsuario}
+                      </span>
+                      <span className="cuenta-home-datos">
+                        <strong>{nombreUsuario}</strong>
+                        <span>{usuario.correo}</span>
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={async () => {
+                        setMenuCuentaAbierto(false);
+                        setAbierto(false);
+                        await onCerrarSesion();
+                      }}
+                    >
+                      <Icono nombre="cerrarSesion" tamano={16} />
+                      {nav?.usuario?.cerrarSesion}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : !sesionCargando ? (
+              <>
+                <a className="ingresar-home" href="#ingresar" onClick={() => setAbierto(false)}>
+                  {nav?.botones?.invitado?.ingresar}
+                </a>
+                <a className="boton-home primario" href="#registro" onClick={() => setAbierto(false)}>
+                  {nav?.botones?.invitado?.crearCuenta}
+                </a>
+              </>
+            ) : null}
           </div>
         </nav>
       </div>

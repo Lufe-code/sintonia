@@ -1,15 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTextos } from "./hooks/useTextos.js";
 import { useInicioPublico } from "./hooks/useInicioPublico.js";
+import { useDetalleAlbum } from "./hooks/useDetalleAlbum.js";
+import { useSesion } from "./hooks/useSesion.js";
+import { useTokensDisenoApi } from "./hooks/useTokensDisenoApi.js";
 import { useTema } from "./hooks/useTema.js";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import InicioPublico from "./components/InicioPublico.jsx";
+import InicioSesionPublico from "./components/InicioSesionPublico.jsx";
 import CatalogoPublico from "./components/CatalogoPublico.jsx";
+import DetalleAlbumPublico from "./components/DetalleAlbumPublico.jsx";
 import PanelAccesibilidad from "./components/PanelAccesibilidad.jsx";
 import BannerCookies from "./components/BannerCookies.jsx";
 import PreferenciasCookies from "./components/PreferenciasCookies.jsx";
 import PiePublico from "./components/PiePublico.jsx";
+import AvisoEstado from "./components/AvisoEstado.jsx";
 
 const PREFERENCIAS_ACCESIBILIDAD_DEFAULT = {
   escalaTexto: 100,
@@ -21,6 +27,20 @@ const PREFERENCIAS_ACCESIBILIDAD_DEFAULT = {
 
 function leerRuta() {
   return window.location.hash.slice(1) || "inicio";
+}
+
+function leerIdAlbum(ruta) {
+  const coincidencia = ruta.match(/^album\/(.+)$/);
+  if (!coincidencia) {
+    return null;
+  }
+
+  try {
+    return decodeURIComponent(coincidencia[1]);
+  } catch (error) {
+    console.error("No se pudo leer el álbum desde la URL:", error);
+    return coincidencia[1];
+  }
 }
 
 function leerIdioma() {
@@ -68,13 +88,21 @@ function App() {
   const [errorCookies, setErrorCookies] = useState(false);
   const datos = useTextos(idioma);
   const inicio = useInicioPublico();
+  const sesion = useSesion();
+  useTokensDisenoApi();
   useTema();
+  const rutaPrincipal = ruta.split("/")[0];
+  const albumId = rutaPrincipal === "album" ? leerIdAlbum(ruta) : null;
+  const esInicioSesion = rutaPrincipal === "ingresar";
+  const detalleAlbum = useDetalleAlbum(albumId);
   const textos = datos.textos;
   const textosInicio = textos?.paginas?.inicioPublico;
   const textosCatalogo = textos?.paginas?.catalogo;
   const pie = textos?.footer;
-  const rutaPrincipal = ruta.split("/")[0];
-  const activo = rutaPrincipal === "genero" ? "catalogo" : rutaPrincipal;
+  const paginaInicioAutenticado = textos?.paginas?.inicio;
+  const activo = rutaPrincipal === "genero" || rutaPrincipal === "album"
+    ? "catalogo"
+    : rutaPrincipal;
 
   useEffect(() => {
     function actualizar() {
@@ -90,9 +118,31 @@ function App() {
   }, [idioma]);
 
   useEffect(() => {
+    if (sesion.usuario && esInicioSesion) {
+      window.history.replaceState(null, "", "#inicio");
+      setRuta("inicio");
+    }
+  }, [sesion.usuario, esInicioSesion]);
+
+  useEffect(() => {
     const esCatalogo = rutaPrincipal === "catalogo" || rutaPrincipal === "genero";
-    const seo = esCatalogo ? textosCatalogo?.seo : textosInicio?.seo;
-    if (seo?.titulo) document.title = seo.titulo;
+    const paginaDetalle = textos?.paginas?.album;
+    const seo = esCatalogo
+      ? textosCatalogo?.seo
+      : rutaPrincipal === "album"
+        ? paginaDetalle?.seo
+        : esInicioSesion
+          ? textos?.paginas?.ingresar?.seo
+          : sesion.usuario
+            ? paginaInicioAutenticado?.seo
+            : textosInicio?.seo;
+    const tituloAlbum = detalleAlbum.album?.titulo;
+    const titulo = rutaPrincipal === "album"
+      ? tituloAlbum
+        ? paginaDetalle?.seo?.titulo?.replace(/\{titulo\}/g, tituloAlbum) || tituloAlbum
+        : paginaDetalle?.noEncontrado?.titulo || ""
+      : seo?.titulo;
+    if (titulo) document.title = titulo;
     if (seo?.descripcion) {
       let descripcion = document.querySelector('meta[name="description"]');
       if (!descripcion) {
@@ -102,7 +152,15 @@ function App() {
       }
       descripcion.content = seo.descripcion;
     }
-  }, [rutaPrincipal, textosCatalogo, textosInicio]);
+  }, [
+    rutaPrincipal,
+    textos,
+    textosCatalogo,
+    textosInicio,
+    paginaInicioAutenticado,
+    sesion.usuario,
+    detalleAlbum.album,
+  ]);
 
   useEffect(() => {
     const raiz = document.documentElement;
@@ -160,23 +218,76 @@ function App() {
     }));
   }
 
+  async function cerrarSesion() {
+    const cerrada = await sesion.cerrarSesion();
+    if (cerrada) {
+      window.history.replaceState(null, "", "#inicio");
+      setRuta("inicio");
+    }
+  }
+
   const textosCookies = textos?.cookies;
   const textosAccesibilidad = textos?.accesibilidad;
   const errorGuardarCookies = textos?.errores?.cookies?.guardar
     || textos?.errores?.general?.error_interno;
 
   return (
-    <div className="sitio">
-      <Navbar
-        textos={textos}
-        idioma={idioma}
-        cambiarIdioma={setIdioma}
-        activo={activo}
-        onBuscar={buscar}
-        accesibilidadAbierta={panelAccesibilidadAbierto}
-        alternarTexto={() => setPanelAccesibilidadAbierto(true)}
-      />
-      {rutaPrincipal === "catalogo" || rutaPrincipal === "genero" ? (
+    <div className={`sitio${esInicioSesion ? " sitio-inicio-sesion" : ""}`}>
+      {!esInicioSesion && (
+        <Navbar
+          textos={textos}
+          idioma={idioma}
+          cambiarIdioma={setIdioma}
+          activo={activo}
+          onBuscar={buscar}
+          usuario={sesion.usuario}
+          sesionCargando={sesion.cargando}
+          onCerrarSesion={cerrarSesion}
+          accesibilidadAbierta={panelAccesibilidadAbierto}
+          alternarTexto={() => setPanelAccesibilidadAbierto(true)}
+        />
+      )}
+      {!esInicioSesion && sesion.error && (
+        <AvisoEstado
+          mensaje={textos?.errores?.general?.error_interno || textos?.errores?.error_interno}
+          accion={sesion.usuario ? cerrarSesion : sesion.recargar}
+          textoAccion={textos?.general?.acciones?.reintentar}
+          tipo="alert"
+        />
+      )}
+      {rutaPrincipal === "album" ? (
+        <DetalleAlbumPublico
+          album={detalleAlbum.album}
+          albumes={inicio.albumesCatalogo}
+          idioma={idioma}
+          textos={textos}
+          estados={textos?.estados}
+          errores={textos?.errores}
+          general={textos?.general}
+          cargando={detalleAlbum.cargando}
+          error={detalleAlbum.error}
+          noEncontrado={detalleAlbum.noEncontrado}
+          recargar={detalleAlbum.recargar}
+        />
+      ) : rutaPrincipal === "ingresar" ? (
+        <InicioSesionPublico
+          idioma={idioma}
+          textos={textos}
+          estados={textos?.estados}
+          errores={textos?.errores}
+          cargandoTextos={datos.cargando}
+          errorTextos={datos.error}
+          recargarTextos={datos.recargar}
+          albumes={inicio.albumesCatalogo}
+          cargandoAlbumes={inicio.cargando}
+          onIniciarSesion={(usuario, token, mantenerSesion) => {
+            sesion.iniciarSesion(usuario, token, mantenerSesion);
+            window.history.replaceState(null, "", "#inicio");
+            setRuta("inicio");
+          }}
+          pie={pie}
+        />
+      ) : rutaPrincipal === "catalogo" || rutaPrincipal === "genero" ? (
         <CatalogoPublico
           idioma={idioma}
           textos={textosCatalogo}
@@ -199,27 +310,32 @@ function App() {
           cargandoTextos={datos.cargando}
           errorTextos={datos.error}
           recargarTextos={datos.recargar}
+          autenticado={Boolean(sesion.usuario)}
           estados={textos?.estados}
           errores={textos?.errores}
           general={textos?.general}
           {...inicio}
         />
       )}
-      <PiePublico
-        textos={pie}
-        onAbrirAccesibilidad={() => setPanelAccesibilidadAbierto(true)}
-        onAbrirCookies={() => setPreferenciasCookiesAbiertas(true)}
-      />
+      {!esInicioSesion && (
+        <PiePublico
+          textos={pie}
+          onAbrirAccesibilidad={() => setPanelAccesibilidadAbierto(true)}
+          onAbrirCookies={() => setPreferenciasCookiesAbiertas(true)}
+        />
+      )}
 
-      <PanelAccesibilidad
-        abierto={panelAccesibilidadAbierto}
-        textos={textosAccesibilidad}
-        preferencias={preferenciasAccesibilidad}
-        onCambiar={cambiarPreferenciaAccesibilidad}
-        onCerrar={cerrarPanelAccesibilidad}
-        onRestablecer={() => setPreferenciasAccesibilidad(PREFERENCIAS_ACCESIBILIDAD_DEFAULT)}
-      />
-      {!consentimiento && textosCookies && (
+      {!esInicioSesion && (
+        <PanelAccesibilidad
+          abierto={panelAccesibilidadAbierto}
+          textos={textosAccesibilidad}
+          preferencias={preferenciasAccesibilidad}
+          onCambiar={cambiarPreferenciaAccesibilidad}
+          onCerrar={cerrarPanelAccesibilidad}
+          onRestablecer={() => setPreferenciasAccesibilidad(PREFERENCIAS_ACCESIBILIDAD_DEFAULT)}
+        />
+      )}
+      {!esInicioSesion && !consentimiento && textosCookies && (
         <BannerCookies
           textos={textosCookies}
           onAceptar={() => guardarConsentimientoCookies(true)}
@@ -227,18 +343,20 @@ function App() {
           onConfigurar={() => setPreferenciasCookiesAbiertas(true)}
         />
       )}
-      {errorCookies && errorGuardarCookies && (
+      {!esInicioSesion && errorCookies && errorGuardarCookies && (
         <p className="cookies-error" role="alert">
           {errorGuardarCookies}
         </p>
       )}
-      <PreferenciasCookies
-        abierto={preferenciasCookiesAbiertas}
-        textos={textosCookies}
-        analiticasGuardadas={consentimiento?.analytics}
-        onGuardar={guardarConsentimientoCookies}
-        onCerrar={cerrarPreferenciasCookies}
-      />
+      {!esInicioSesion && (
+        <PreferenciasCookies
+          abierto={preferenciasCookiesAbiertas}
+          textos={textosCookies}
+          analiticasGuardadas={consentimiento?.analytics}
+          onGuardar={guardarConsentimientoCookies}
+          onCerrar={cerrarPreferenciasCookies}
+        />
+      )}
     </div>
   );
 }

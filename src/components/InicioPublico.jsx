@@ -1,65 +1,10 @@
 import AvisoEstado from "./AvisoEstado.jsx";
-import portada1 from "../assets/portada tarjetas/1.png";
-import portada2 from "../assets/portada tarjetas/2.png";
-import portada3 from "../assets/portada tarjetas/3.png";
-import portada4 from "../assets/portada tarjetas/4.png";
-import portada5 from "../assets/portada tarjetas/5.png";
-import imagenGeneroCantoDeGuadua from "../assets/portada tarjetas/album-canto-de-guadua.png";
-import imagenGeneroMusicaAndina from "../assets/portada tarjetas/genero-musica-andina.png";
-import imagenGeneroMareaViva from "../assets/portada tarjetas/album-marea-viva.png";
-import imagenGeneroFrailejonAcustico from "../assets/portada tarjetas/album-frailejon-acustico.png";
-import imagenGeneroEnVivoEnElRuiz from "../assets/portada tarjetas/album-en-vivo-en-el-ruiz.png";
-import imagenGeneroPleamar from "../assets/portada tarjetas/album-pleamar.png";
-import imagenGeneroInstrumental from "../assets/portada tarjetas/genero-instrumental.png";
 import imagenPortadaInicio from "../assets/icono portada/inicio-collage.png";
+import Portada from "./Portada.jsx";
 import "../styles/InicioPublico.css";
-
-const PORTADAS_DESTACADOS = [portada1, portada2, portada3, portada4, portada1, portada5];
-const IMAGENES_GENERO_ORDENADAS = [
-  imagenGeneroCantoDeGuadua,
-  portada1,
-  portada2,
-  portada4,
-  portada5,
-  portada3,
-  imagenGeneroMusicaAndina,
-  imagenGeneroMareaViva,
-  imagenGeneroFrailejonAcustico,
-  imagenGeneroEnVivoEnElRuiz,
-  imagenGeneroPleamar,
-  imagenGeneroInstrumental,
-];
 
 function colorGenero(genero) {
   return genero?.colorHex || genero?.portada?.fondo || "var(--marca-secundario)";
-}
-
-function obtenerImagenDesdeApi(registro, claves) {
-  for (const clave of claves) {
-    const valor = clave.split(".").reduce((acumulado, segmento) => acumulado?.[segmento], registro);
-    if (typeof valor === "string" && valor.trim()) {
-      return valor;
-    }
-  }
-  return "";
-}
-
-function obtenerIlustracionGenero(genero, indiceGenero) {
-  const imagenApi = obtenerImagenDesdeApi(genero, [
-    "ilustracion",
-    "imagen",
-    "imagenUrl",
-    "urlImagen",
-    "portada.imagen",
-    "portada.imagenUrl",
-    "portada.url",
-  ]);
-
-  if (imagenApi) {
-    return imagenApi;
-  }
-
-  return IMAGENES_GENERO_ORDENADAS[indiceGenero % IMAGENES_GENERO_ORDENADAS.length];
 }
 
 function fechaAlbum(fecha, idioma) {
@@ -73,14 +18,11 @@ function fechaAlbum(fecha, idioma) {
   }).format(fechaLocal);
 }
 
-function PortadaAlbum({ album, indice }) {
+function PortadaAlbum({ album }) {
   return (
-    <img
+    <Portada
       className="portada-album portada-destacada"
-      src={PORTADAS_DESTACADOS[indice % PORTADAS_DESTACADOS.length]}
-      alt=""
-      loading="lazy"
-      decoding="async"
+      portada={album?.portada}
     />
   );
 }
@@ -100,6 +42,7 @@ export default function InicioPublico({
   cargando,
   error,
   recargar,
+  autenticado = false,
 }) {
   const hero = textos?.hero;
   const cifras = textos?.cifras;
@@ -136,9 +79,11 @@ export default function InicioPublico({
           <h1 id="titulo-inicio">{hero?.titulo}</h1>
           <p>{hero?.subtitulo}</p>
           <div className="inicio-acciones">
-            <a className="boton-home primario" href="#registro">
-              {hero?.botones?.crearCuentaGratis}
-            </a>
+            {!autenticado && (
+              <a className="boton-home primario" href="#registro">
+                {hero?.botones?.crearCuentaGratis}
+              </a>
+            )}
             <a className="boton-home secundario" href="#catalogo">
               {hero?.botones?.explorarCatalogo}
             </a>
@@ -198,21 +143,37 @@ export default function InicioPublico({
           </p>
         ) : albumesFiltrados.length > 0 ? (
           <div className="rejilla-albumes ancho-home">
-            {albumesFiltrados.map((album, indice) => (
-              <article className="tarjeta-album" key={album.id}>
-                <PortadaAlbum album={album} indice={indice} />
-                <div className="datos-album">
-                  <div>
-                    <h3>{album.titulo}</h3>
-                    <p>{album.artista?.nombre}</p>
+            {albumesFiltrados.map((album, indice) => {
+              const contenidoTarjeta = (
+                <>
+                  <PortadaAlbum album={album} />
+                  <div className="datos-album">
+                    <div>
+                      <h3>{album.titulo}</h3>
+                      <p>{album.artista?.nombre}</p>
+                    </div>
+                    <span>{album.genero}</span>
                   </div>
-                  <span>{album.genero}</span>
-                </div>
-                <time dateTime={album.fechaPublicacion}>
-                  {fechaAlbum(album.fechaPublicacion, idioma)}
-                </time>
-              </article>
-            ))}
+                  <time dateTime={album.fechaPublicacion}>
+                    {fechaAlbum(album.fechaPublicacion, idioma)}
+                  </time>
+                </>
+              );
+
+              return album?.id ? (
+                <a
+                  className="tarjeta-album tarjeta-album-enlace"
+                  href={`#album/${encodeURIComponent(album.id)}`}
+                  key={album.id}
+                >
+                  {contenidoTarjeta}
+                </a>
+              ) : (
+                <article className="tarjeta-album" key={`${album.titulo}-${indice}`}>
+                  {contenidoTarjeta}
+                </article>
+              );
+            })}
           </div>
         ) : (
           <p className="estado-catalogo ancho-home">{estados?.vacio?.generico?.mensaje}</p>
@@ -230,19 +191,16 @@ export default function InicioPublico({
           </a>
         </div>
         <div className="rejilla-generos ancho-home">
-          {generos.slice(0, 8).map((genero, indiceGenero) => (
+          {generos.slice(0, 8).map((genero) => (
             <a
               className="genero-item"
               href={`#genero/${encodeURIComponent(genero.id)}`}
               key={genero.id}
               style={{ "--color-genero": colorGenero(genero) }}
             >
-              <img
+              <Portada
                 className="genero-ilustracion"
-                src={obtenerIlustracionGenero(genero, indiceGenero)}
-                alt=""
-                loading="lazy"
-                decoding="async"
+                portada={genero.portada}
               />
               <span className="genero-punto" aria-hidden="true" />
               <span className="genero-nombre">{genero.nombre}</span>
@@ -256,18 +214,20 @@ export default function InicioPublico({
         </div>
       </section>
 
-      <section className="inicio-cta">
-        <div className="inicio-cta-interior ancho-home">
-          <div>
-            {cta?.etiqueta && <span className="inicio-etiqueta">{cta.etiqueta}</span>}
-            <h2>{cta?.titulo}</h2>
-            <p>{cta?.texto}</p>
+      {!autenticado && (
+        <section className="inicio-cta">
+          <div className="inicio-cta-interior ancho-home">
+            <div>
+              {cta?.etiqueta && <span className="inicio-etiqueta">{cta.etiqueta}</span>}
+              <h2>{cta?.titulo}</h2>
+              <p>{cta?.texto}</p>
+            </div>
+            <a className="boton-home primario" href="#registro">
+              {cta?.botones?.crearCuentaGratis}
+            </a>
           </div>
-          <a className="boton-home primario" href="#registro">
-            {cta?.botones?.crearCuentaGratis}
-          </a>
-        </div>
-      </section>
+        </section>
+      )}
       {cargandoTextos && (
         <span className="sr-only" role="status">
           {estados?.cargando?.mensaje}

@@ -5,6 +5,7 @@ if (!baseUrl) {
 }
 
 export const API_BASE_URL = baseUrl.replace(/\/$/, "");
+export const API_ORIGIN = new URL(API_BASE_URL).origin;
 
 export async function obtenerJson(ruta, { signal } = {}) {
   const url = ruta.startsWith("http") ? ruta : `${API_BASE_URL}${ruta}`;

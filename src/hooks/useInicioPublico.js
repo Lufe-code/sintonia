@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { obtenerJson } from "../config/api.js";
 
-const GENEROS_DESTACADOS = 6;
 const LIMITE_ALBUMES_DESTACADOS = 6;
 const TIEMPO_LIMITE_CARGA_MS = 12000;
 
@@ -62,10 +61,18 @@ export function useInicioPublico() {
       setError(false);
 
       try {
-        const respuestaGeneros = await obtenerJson("/generos", {
-          signal: controlador.signal,
-        });
+        const [respuestaAlbumes, respuestaGeneros] = await Promise.all([
+          obtenerJson(`/albumes?orden=populares&limite=${LIMITE_ALBUMES_DESTACADOS}`, {
+            signal: controlador.signal,
+          }),
+          obtenerJson("/generos", {
+            signal: controlador.signal,
+          }),
+        ]);
 
+        if (!Array.isArray(respuestaAlbumes?.datos)) {
+          throw new Error("La respuesta no contiene una lista de álbumes.");
+        }
         if (!Array.isArray(respuestaGeneros?.datos)) {
           throw new Error("La respuesta no contiene una lista de géneros.");
         }
@@ -80,9 +87,7 @@ export function useInicioPublico() {
         );
 
         const albumesCatalogoLista = prepararAlbumesOrdenados(detallesGeneros);
-        const albumesDestacados = prepararAlbumesOrdenados(
-          detallesGeneros.slice(0, GENEROS_DESTACADOS),
-        ).slice(0, LIMITE_ALBUMES_DESTACADOS);
+        const albumesDestacados = respuestaAlbumes.datos.slice(0, LIMITE_ALBUMES_DESTACADOS);
 
         if (!solicitudVigente) {
           return;
